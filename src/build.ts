@@ -1,7 +1,8 @@
 // build the selector
-import './selector/bindings';
-import './selector/override';
+import './core/selector-bindings';
+import './core/selector-bindcall';
+import './core/selector-override';
 
 // build the d3bind root element
-import './root/override';
+import './core/root-override';
 import './root/observe';

@@ -1,6 +1,6 @@
 import Observable from "../observable/observable";
 
-type Noop = () => void;
+export type Noop = () => void;
 
 function getBoundValue<V, T>(observable : Observable<T>, converter?: (input: T) => V): V;
 function getBoundValue<V>(observable: Observable<any>[], converter: (...params: any[]) => V): V;
@@ -23,25 +23,24 @@ function callEvery(func: Noop | Noop[]) {
     }
 }
 
-function subscribe<T>(observable : Observable<T>, handler: Noop): Noop;
-function subscribe(observable: Observable<any>[], handler: Noop): Noop;
-function subscribe(observable: any, handler: Noop): Noop {
+export function subscribe(observable: Observable<any> | Observable<any>[], handler: Noop): Noop {
     var unbind: Noop | Noop[] = null;
+
     if (observable instanceof Array) {
-        unbind = observable.map((property: Observable<any>) => { property.subscribe(handler); });
+        unbind = observable.map((obsItem: Observable<any>) => obsItem.subscribe(handler));
     } else {
-        unbind = observable.subscribe(handler);
+        unbind = (<Observable<any>>observable).subscribe(handler);
     }
 
     return () => { callEvery(unbind) };
 }
 
-export function bind<V, T>(observable : Observable<T>, converter: (input: T) => V, applyFunc: (input: V) => void): void;
-export function bind<V>(observable: Observable<any>[], converter: (...params: any[]) => V, applyFunc: (input: V) => void): void;
-export function bind<V>(observable: any, converter: any, applyFunc: (input: V) => void): void {
+export function bind<V, T>(observable : Observable<T>, converter: (input: T) => V, applyFunc: (input: V) => void): Noop;
+export function bind<V>(observable: Observable<any>[], converter: (...params: any[]) => V, applyFunc: (input: V) => void): Noop;
+export function bind<V>(observable: any, converter: any, applyFunc: (input: V) => void): Noop {
     applyFunc(getBoundValue<V>(observable, converter));
 
-    subscribe(observable, () => {
+    return subscribe(observable, () => {
         applyFunc(getBoundValue<V>(observable, converter));
     });
 }
