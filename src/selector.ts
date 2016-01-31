@@ -1,5 +1,5 @@
 import Observable from "./observable/observable";
-import Selection = d3.Selection;
+import ObservableList from "./observable/list";
 
 
 export type D3Selector = d3.Selection<any>;
@@ -43,7 +43,10 @@ export interface D3BindSelector extends D3Selector {
     insert(tagName: string, before: () => EventTarget): D3BindSelector,
     insert(func: () => EventTarget, before: string): D3BindSelector,
     insert(func: () => EventTarget, before: () => EventTarget): D3BindSelector,
-    remove(): D3BindSelector
+    remove(): D3BindSelector,
+
+    repeat<T>(modelList: ArrayLike<T>, renderer: (modelItem: T, index: number, parent: D3BindSelector) => void): D3BindSelector,
+    bindRepeat<T>(modelList: ObservableList<T>, renderer: (modelItem: T, index: number, parent: D3BindSelector) => void): D3BindSelector
 }
 
 const d3bindSelector: D3BindSelector = <D3BindSelector>{};

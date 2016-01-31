@@ -38,7 +38,7 @@ export default class ObservableProperty<T> implements Observable<T> {
 
     subscribe(handler: ObservableHandler<T>): () => void {
         this._subscribers.push(handler);
-        return function() { this.unsubscribe(handler); };
+        return () => { this.unsubscribe(handler); };
     }
 
     unsubscribe(handler: ObservableHandler<T>) {
@@ -57,8 +57,8 @@ export default class ObservableProperty<T> implements Observable<T> {
         this._trigger(value, value);
     }
 
-    _trigger(oldValue: T, newValue: T) {
-        this._subscribers.forEach(function(subscriber) {
+    private _trigger(oldValue: T, newValue: T) {
+        this._subscribers.forEach(subscriber => {
             subscriber.call(null, newValue, oldValue);
         });
     }
