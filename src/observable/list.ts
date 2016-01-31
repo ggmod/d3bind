@@ -1,3 +1,5 @@
+import ObservableListLength from './list-length';
+
 
 export interface ObservableListHandler<T> {
     insert: (item: T, index: number) => void,
@@ -8,6 +10,7 @@ export default class ObservableList<T> {
 
     private _array: T[] = [];
     private _subscribers: ObservableListHandler<T>[] = [];
+    private _observableLength: ObservableListLength;
 
     get array() {
         return this._array;
@@ -21,6 +24,10 @@ export default class ObservableList<T> {
         var list = new ObservableList<T>();
         list._array = array;
         return list;
+    }
+
+    constructor() {
+        this._observableLength = new ObservableListLength(this);
     }
 
     // subscribing:
@@ -51,6 +58,12 @@ export default class ObservableList<T> {
         this._subscribers.forEach(subscriber => {
             subscriber.remove.call(null, item, index);
         });
+    }
+
+    // length subscribing:
+
+    get $length() {
+        return this._observableLength;
     }
 
     // additional Array methods:

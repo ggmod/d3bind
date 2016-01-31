@@ -1,8 +1,7 @@
-import {ObservableHandler} from "./observable";
-import Observable from './observable';
+import {ObservableHandler, WritableObservable} from "./observable";
 
 
-export default class ObservableProperty<T> implements Observable<T> {
+export default class ObservableProperty<T> implements WritableObservable<T> {
 
     private _name: string;
     private _parent: any;
