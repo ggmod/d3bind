@@ -75,6 +75,7 @@ export default class BindRepeat<T> {
         this.renderer.call(this.selectorProxy, item, indexProxy, this.selectorProxy);
 
         this.currentEvent = BindRepeatEvent.INSERT_REINDEXING;
+        this.currentIndex++;
         this.updateViewIndexes();
 
         this.currentEvent = null;
@@ -100,7 +101,7 @@ export default class BindRepeat<T> {
         // I assume that in most use-cases there will be either no index subscribers, or every item will have some
         if (this.indexSubscriberCount > 0) {
             for (; this.currentIndex < this.repeatItems.length; this.currentIndex++) {
-                this.repeatItems[this.currentIndex].indexProxy.trigger();
+                this.repeatItems[this.currentIndex].indexProxy._trigger();
             }
         }
     }

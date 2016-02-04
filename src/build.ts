@@ -4,6 +4,7 @@ import './core/selector-bindcall';
 import './core/selector-override';
 import './repeat/repeat';
 import './repeat/bind-repeat';
+import './input/bind-input';
 
 // build the d3bind root element
 import './core/root-override';

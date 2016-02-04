@@ -1,5 +1,6 @@
-import Observable from "./observable/observable";
+import Observable, {WritableObservable} from "./observable/observable";
 import ObservableList from "./observable/list";
+import {Primitive} from './utils';
 
 
 export type D3Selector = d3.Selection<any>;
@@ -18,17 +19,17 @@ export interface D3BindSelector extends D3Selector {
     bindClassed<T>(className: string, observable: Observable<T>, converter: (input: T) => boolean): D3BindSelector,
     bindClassed(className: string, observable: Observable<any>[], converter: (...params: any[]) => boolean): D3BindSelector;
 
-    bindStyle(styleName: string, observable: Observable<string | number>): D3BindSelector,
-    bindStyle<T>(styleName: string, observable: Observable<T>, converter: (input: T) => string | number): D3BindSelector,
-    bindStyle(styleName: string, observable: Observable<any>[], converter: (...params: any[]) => string | number): D3BindSelector;
+    bindStyle(styleName: string, observable: Observable<Primitive>): D3BindSelector,
+    bindStyle<T>(styleName: string, observable: Observable<T>, converter: (input: T) => Primitive): D3BindSelector,
+    bindStyle(styleName: string, observable: Observable<any>[], converter: (...params: any[]) => Primitive): D3BindSelector;
 
-    bindAttr(attr: string, observable: Observable<string>): D3BindSelector,
-    bindAttr<T>(attr: string, observable: Observable<T>, converter: (input: T) => string): D3BindSelector,
-    bindAttr(attr: string, observable: Observable<any>[], converter: (...params: any[]) => string): D3BindSelector;
+    bindAttr(attr: string, observable: Observable<Primitive>): D3BindSelector,
+    bindAttr<T>(attr: string, observable: Observable<T>, converter: (input: T) => Primitive): D3BindSelector,
+    bindAttr(attr: string, observable: Observable<any>[], converter: (...params: any[]) => Primitive): D3BindSelector;
 
-    bindProperty(property: string, observable: Observable<any>): D3BindSelector,
-    bindProperty<T>(property: string, observable: Observable<T>, converter: (input: T) => any): D3BindSelector,
-    bindProperty(property: string, observable: Observable<any>[], converter: (...params: any[]) => any): D3BindSelector;
+    bindProperty(property: string, observable: Observable<Primitive>): D3BindSelector,
+    bindProperty<T>(property: string, observable: Observable<T>, converter: (input: T) => Primitive): D3BindSelector,
+    bindProperty(property: string, observable: Observable<any>[], converter: (...params: any[]) => Primitive): D3BindSelector;
 
     bindCall(observable: Observable<any> | Observable<any>[], func: (selector: D3BindSelector) => void): D3BindSelector;
 
@@ -46,7 +47,9 @@ export interface D3BindSelector extends D3Selector {
     remove(): D3BindSelector,
 
     repeat<T>(modelList: ArrayLike<T>, renderer: (modelItem: T, index: number, parent: D3BindSelector) => void): D3BindSelector,
-    bindRepeat<T>(modelList: ObservableList<T>, renderer: (modelItem: T, index: number, parent: D3BindSelector) => void): D3BindSelector
+    bindRepeat<T>(modelList: ObservableList<T>, renderer: (modelItem: T, index: number, parent: D3BindSelector) => void): D3BindSelector,
+
+    bindInput(observable: WritableObservable<any>): D3BindSelector
 }
 
 const d3bindSelector: D3BindSelector = <D3BindSelector>{};

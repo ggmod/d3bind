@@ -37,11 +37,13 @@ export default class ObservableList<T> {
         return function() { this.unsubscribe(handler); };
     }
 
-    unsubscribe(handler: ObservableListHandler<T>) {
+    unsubscribe(handler: ObservableListHandler<T>): boolean {
         var index = this._subscribers.indexOf(handler);
         if (index >= 0) {
             this._subscribers.splice(index, 1);
+            return true;
         }
+        return false;
     }
 
     unsubscribeAll() {

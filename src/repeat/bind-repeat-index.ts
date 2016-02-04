@@ -1,40 +1,36 @@
 import BindRepeat from './bind-repeat.ts';
-import Observable, {ObservableHandler} from '../observable/observable';
+import {ObservableHandler} from '../observable/observable';
 import BindRepeatEvent from "./bind-repeat";
+import AbstractObservable from '../observable/abstract';
 
 
-export default class BindRepeatIndexProxy implements Observable<number> {
+export default class BindRepeatIndexProxy extends AbstractObservable<number> {
 
-    private _subscribers: ObservableHandler<number>[] = [];
-
-    constructor(private bindRepeat: BindRepeat<any>) { }
+    constructor(private bindRepeat: BindRepeat<any>) {
+        super();
+    }
 
     subscribe(handler: ObservableHandler<number>): () => void {
         this.bindRepeat.indexSubscriberCount++;
-
-        this._subscribers.push(handler);
-        return function() { this.unsubscribe(handler); };
+        return super.subscribe(handler);
     }
 
     unsubscribe(handler: ObservableHandler<number>) {
-        var index = this._subscribers.indexOf(handler);
-        if (index >= 0) {
+        var success = super.unsubscribe(handler);
+        if (success) {
             this.bindRepeat.indexSubscriberCount--;
-
-            this._subscribers.splice(index, 1);
         }
+        return success;
     }
 
     unsubscribeAll() {
         this.bindRepeat.indexSubscriberCount -= this._subscribers.length;
-        this._subscribers = [];
+        super.unsubscribeAll();
     }
 
-    trigger() {
-        this._subscribers.forEach(subscriber => {
-            var { newValue, oldValue } = this.bindRepeat.getCurrentAndPreviousValueOfIndexProxy(this);
-            subscriber.call(null, newValue, oldValue);
-        });
+    _trigger(caller?: any) {
+        var { newValue, oldValue } = this.bindRepeat.getCurrentAndPreviousValueOfIndexProxy(this);
+        super._trigger(newValue, oldValue, caller);
     }
 
     get(): number {

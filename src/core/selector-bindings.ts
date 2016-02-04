@@ -1,6 +1,7 @@
 import {bind} from '../bindings/helpers';
 import Observable from "../observable/observable";
 import selector, {D3BindSelector} from "../selector";
+import {Primitive} from '../utils';
 
 
 function bindText(observable: Observable<string>): D3BindSelector;
@@ -36,33 +37,33 @@ function bindClassed(className: string, observable: any, converter?: any): D3Bin
 }
 selector.bindClassed = bindClassed;
 
-function bindStyle(styleName: string, observable: Observable<string | number>): D3BindSelector;
-function bindStyle<T>(styleName: string, observable: Observable<T>, converter?: (input: T) => string | number): D3BindSelector;
-function bindStyle(styleName: string, observable: Observable<any>[], converter: (...params: any[]) => string | number): D3BindSelector;
+function bindStyle(styleName: string, observable: Observable<Primitive>): D3BindSelector;
+function bindStyle<T>(styleName: string, observable: Observable<T>, converter?: (input: T) => Primitive): D3BindSelector;
+function bindStyle(styleName: string, observable: Observable<any>[], converter: (...params: any[]) => Primitive): D3BindSelector;
 function bindStyle(styleName: string, observable: any, converter?: any): D3BindSelector {
-    bind(observable, converter, (value: string | number) => {
+    bind(observable, converter, (value: Primitive) => {
         this.style(styleName, value);
     });
     return this;
 }
 selector.bindStyle = bindStyle;
 
-function bindAttr(attr: string, observable: Observable<string>): D3BindSelector;
-function bindAttr<T>(attr: string, observable: Observable<T>, converter?: (input: T) => string): D3BindSelector;
-function bindAttr(attr: string, observable: Observable<any>[], converter: (...params: any[]) => string): D3BindSelector;
+function bindAttr(attr: string, observable: Observable<Primitive>): D3BindSelector;
+function bindAttr<T>(attr: string, observable: Observable<T>, converter?: (input: T) => Primitive): D3BindSelector;
+function bindAttr(attr: string, observable: Observable<any>[], converter: (...params: any[]) => Primitive): D3BindSelector;
 function bindAttr(attr: string, observable: any, converter?: any): D3BindSelector {
-    bind(observable, converter, (value: string) => {
+    bind(observable, converter, (value: Primitive) => {
         this.attr(attr, value);
     });
     return this;
 }
 selector.bindAttr = bindAttr;
 
-function bindProperty(property: string, observable: Observable<any>): D3BindSelector;
-function bindProperty<T>(property: string, observable: Observable<T>, converter?: (input: T) => any): D3BindSelector;
-function bindProperty(property: string, observable: Observable<any>[], converter: (...params: any[]) => any): D3BindSelector;
+function bindProperty(property: string, observable: Observable<Primitive>): D3BindSelector;
+function bindProperty<T>(property: string, observable: Observable<T>, converter?: (input: T) => Primitive): D3BindSelector;
+function bindProperty(property: string, observable: Observable<any>[], converter: (...params: any[]) => Primitive): D3BindSelector;
 function bindProperty(property: string, observable: any, converter?: any): D3BindSelector {
-    bind(observable, converter, (value: any) => {
+    bind(observable, converter, (value: Primitive) => {
         this.property(property, value);
     });
     return this;
