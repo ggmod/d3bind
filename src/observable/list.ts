@@ -4,6 +4,7 @@ import ObservableListLength from './list-length';
 export interface ObservableListHandler<T> {
     insert: (item: T, index: number) => void,
     remove: (item: T, index: number) => void,
+    replace?: (item: T, index: number, oldValue: T, caller?: any) => void
 }
 
 export default class ObservableList<T> {
@@ -62,6 +63,17 @@ export default class ObservableList<T> {
         });
     }
 
+    private _triggerReplace(item: T, index: number, oldValue: T, caller?: any) {
+        this._subscribers.forEach(subscriber => {
+            if (subscriber.replace != null) {
+                subscriber.replace.call(null, item, index, oldValue, caller);
+            } else {
+                subscriber.remove.call(null, oldValue, index);
+                subscriber.insert.call(null, item, index);
+            }
+        });
+    }
+
     // length subscribing:
 
     get $length() {
@@ -74,12 +86,11 @@ export default class ObservableList<T> {
         return this._array[index];
     }
 
-    set(index: number, value: T, noTrigger = false) {
+    set(index: number, value: T, noTrigger = false, caller?: any) {
         var oldValue = this._array[index];
         this._array[index] = value;
         if (!noTrigger) {
-            this._triggerRemove(oldValue, index);
-            this._triggerInsert(value, index);
+            this._triggerReplace(value, index, oldValue, caller);
         }
     }
 

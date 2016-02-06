@@ -6,7 +6,7 @@ import AbstractObservable from '../observable/abstract';
 
 export default class BindRepeatIndexProxy extends AbstractObservable<number> {
 
-    constructor(private bindRepeat: BindRepeat<any>) {
+    constructor(private id: number, private bindRepeat: BindRepeat<any>) {
         super();
     }
 
@@ -29,11 +29,11 @@ export default class BindRepeatIndexProxy extends AbstractObservable<number> {
     }
 
     _trigger(caller?: any) {
-        var { newValue, oldValue } = this.bindRepeat.getCurrentAndPreviousValueOfIndexProxy(this);
+        var { newValue, oldValue } = this.bindRepeat.getCurrentAndPreviousValueOfItem(this.id);
         super._trigger(newValue, oldValue, caller);
     }
 
     get(): number {
-        return this.bindRepeat.getCurrentValueOfIndexProxy(this);
+        return this.bindRepeat.getCurrentValueOfItem(this.id);
     }
 }

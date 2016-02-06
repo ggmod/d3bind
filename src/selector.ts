@@ -1,6 +1,7 @@
 import Observable, {WritableObservable} from "./observable/observable";
 import ObservableList from "./observable/list";
 import {Primitive} from './utils';
+import {BindRepeatRenderer, BindRepeatOptions} from './repeat/bind-repeat';
 
 
 export type D3Selector = d3.Selection<any>;
@@ -47,7 +48,7 @@ export interface D3BindSelector extends D3Selector {
     remove(): D3BindSelector,
 
     repeat<T>(modelList: ArrayLike<T>, renderer: (modelItem: T, index: number, parent: D3BindSelector) => void): D3BindSelector,
-    bindRepeat<T>(modelList: ObservableList<T>, renderer: (modelItem: T, index: number, parent: D3BindSelector) => void): D3BindSelector,
+    bindRepeat<T>(modelList: ObservableList<T>, renderer: BindRepeatRenderer<T>, options?: BindRepeatOptions): D3BindSelector,
 
     bindInput(observable: WritableObservable<any>): D3BindSelector
 }

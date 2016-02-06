@@ -2,36 +2,54 @@ import selector, {D3Selector, D3BindSelector} from "../selector";
 import ObservableList from "../observable/list";
 import Observable, {ObservableHandler} from '../observable/observable'
 import BindRepeatIndexProxy from './bind-repeat-index';
+import BindRepeatDatumProxy from "./bind-repeat-datum";
+import WritableObservable from "../observable/observable";
 
 
 enum BindRepeatEvent {
     BUILD,
     INSERT,
     REMOVE,
+    REPLACE,
     INSERT_REINDEXING,
     REMOVE_REINDEXING
 }
 
-interface BindRepeatItem {
+interface BindRepeatItem<T> {
+    id: number,
+    index: number,
     selector: D3BindSelector,
-    indexProxy: BindRepeatIndexProxy
+    indexProxy: BindRepeatIndexProxy,
+    datumProxy: BindRepeatDatumProxy<T>
 }
+
+export interface BindRepeatOptions {
+    customReplace: boolean
+}
+
+export type BindRepeatRenderer<T> = (modelItem: T | WritableObservable<T>, index: Observable<number>, parent: D3BindSelector) => void;
+
 
 export default class BindRepeat<T> {
 
     selectorProxy: D3BindSelector;
 
-    repeatItems: BindRepeatItem[] = [];
+    repeatItems: BindRepeatItem<T>[] = [];
+    repeatItemsById: { [id: string]: BindRepeatItem<T>} = {};
 
     // state variables, the source of all evil
     currentIndex: number;
     currentEvent: BindRepeatEvent;
 
     indexSubscriberCount = 0;
+    datumSubscriberCount = 0;
+
+    itemCounter = 0;
 
     constructor(
-        private modelList: ObservableList<T>,
-        private renderer: (modelItem: T, index: number, parent: D3BindSelector) => void,
+        public modelList: ObservableList<T>,
+        private renderer: BindRepeatRenderer<T>,
+        private options: BindRepeatOptions = <BindRepeatOptions>{},
         private selector: D3BindSelector
     ) {
 
@@ -41,8 +59,31 @@ export default class BindRepeat<T> {
 
         modelList.subscribe({
             insert: (item, index) => { this.onInsert(item, index); },
-            remove: (item, index) => { this.onRemove(item, index); }
+            remove: (item, index) => { this.onRemove(item, index); },
+            replace: options.customReplace ? (item, index, oldValue, caller) => { this.onReplace(item, index, oldValue, caller); } : undefined
         });
+    }
+
+    _createRepeatItem() {
+        var id = this.itemCounter++;
+        var indexProxy = new BindRepeatIndexProxy(id, this);
+        var datumProxy = this.options.customReplace ? new BindRepeatDatumProxy<T>(id, this) : null;
+
+        var repeatItem = <BindRepeatItem<T>>{
+            id: id,
+            selector: null,
+            indexProxy: indexProxy,
+            datumProxy: datumProxy,
+            index: this.currentIndex
+        };
+        if (this.currentIndex === this.repeatItems.length) {
+            this.repeatItems.push(repeatItem);
+        } else {
+            this.repeatItems.splice(this.currentIndex, 0, repeatItem);
+        }
+        this.repeatItemsById[id] = repeatItem;
+
+        return { indexProxy, datumProxy };
     }
 
     build() {
@@ -50,13 +91,10 @@ export default class BindRepeat<T> {
 
         for (this.currentIndex = 0; this.currentIndex < this.modelList.length; this.currentIndex++) {
 
-            var indexProxy = new BindRepeatIndexProxy(this);
-            this.repeatItems.push(<BindRepeatItem>{
-                indexProxy: indexProxy,
-                selector: null
-            });
+            var { indexProxy, datumProxy } = this._createRepeatItem();
             var modelItem = this.modelList.get(this.currentIndex);
-            this.renderer.call(this.selectorProxy, modelItem, indexProxy, this.selectorProxy); // 'this' passed in twice, intentional redundancy
+            var rendererItem = this.options.customReplace ? datumProxy : modelItem;
+            this.renderer.call(this.selectorProxy, rendererItem, indexProxy, this.selectorProxy); // 'this' passed in twice, intentional redundancy
         }
 
         this.currentEvent = null;
@@ -67,16 +105,13 @@ export default class BindRepeat<T> {
         this.currentEvent = BindRepeatEvent.INSERT;
         this.currentIndex = index;
 
-        var indexProxy = new BindRepeatIndexProxy(this);
-        this.repeatItems.splice(this.currentIndex, 0, <BindRepeatItem>{
-            indexProxy: indexProxy,
-            selector: null
-        });
-        this.renderer.call(this.selectorProxy, item, indexProxy, this.selectorProxy);
+        var { indexProxy, datumProxy } = this._createRepeatItem();
+        var rendererItem = this.options.customReplace ? datumProxy : item;
+        this.renderer.call(this.selectorProxy, rendererItem, indexProxy, this.selectorProxy);
 
         this.currentEvent = BindRepeatEvent.INSERT_REINDEXING;
         this.currentIndex++;
-        this.updateViewIndexes();
+        this.updateIndexes();
 
         this.currentEvent = null;
         this.currentIndex = null;
@@ -87,46 +122,56 @@ export default class BindRepeat<T> {
         this.currentIndex = index;
 
         var itemToRemove = this.repeatItems.splice(index, 1)[0];
+        delete this.repeatItemsById[itemToRemove.id];
+
         itemToRemove.selector.remove();
         itemToRemove.indexProxy.unsubscribeAll();
 
         this.currentEvent = BindRepeatEvent.REMOVE_REINDEXING;
-        this.updateViewIndexes();
+        this.updateIndexes();
 
         this.currentEvent = null;
         this.currentIndex = null;
     }
 
-    updateViewIndexes() {
+    onReplace(item: T, index: number, oldValue: T, caller: any) {
+        this.currentEvent = BindRepeatEvent.REPLACE;
+        this.currentIndex = index;
+
+        var repeatItem = this.repeatItems[index];
+        repeatItem.datumProxy._trigger(item, oldValue, caller);
+
+        this.currentEvent = null;
+        this.currentIndex = null;
+    }
+
+    updateIndexes() {
         // I assume that in most use-cases there will be either no index subscribers, or every item will have some
-        if (this.indexSubscriberCount > 0) {
+        if (this.indexSubscriberCount > 0 || this.datumSubscriberCount > 0) {
             for (; this.currentIndex < this.repeatItems.length; this.currentIndex++) {
-                this.repeatItems[this.currentIndex].indexProxy._trigger();
+                this.repeatItems[this.currentIndex].index = this.currentIndex;
+                if (this.indexSubscriberCount > 0) {
+                    this.repeatItems[this.currentIndex].indexProxy._trigger();
+                }
             }
         }
     }
 
-    getCurrentValueOfIndexProxy(indexProxy: BindRepeatIndexProxy) {
+    getCurrentValueOfItem(id: number) {
         if (this.currentIndex !== null) {
             return this.currentIndex;
         } else {
-            var log = console.warn !== undefined ? console.warn : console.log;
-            log('WARNING: bindRepeat index queried asynchronously, this can be inefficient');
-
-            for (var i = 0; i < this.repeatItems.length; i++) {
-                if (this.repeatItems[i].indexProxy === indexProxy) {
-                    return i;
-                }
-            }
-            throw "bindRepeat index not found!";
+            var index = this.repeatItemsById[id].index;
+            if (index == null) throw "bindRepeat index not found!";
+            return index;
         }
     }
 
-    getCurrentAndPreviousValueOfIndexProxy(indexProxy: BindRepeatIndexProxy) {
-        var newValue = this.getCurrentValueOfIndexProxy(indexProxy);
+    getCurrentAndPreviousValueOfItem(id: number) {
+        var newValue = this.getCurrentValueOfItem(id);
 
         var oldValue: number = null;
-        if (this.currentEvent === null) {
+        if (this.currentEvent === null || BindRepeatEvent.REPLACE) {
             oldValue = newValue;
         } else if (this.currentEvent === BindRepeatEvent.INSERT || this.currentEvent === BindRepeatEvent.REMOVE ||
             this.currentEvent === BindRepeatEvent.BUILD) {
@@ -175,9 +220,8 @@ export default class BindRepeat<T> {
     }
 }
 
-
-function bindRepeat<T>(modelList: ObservableList<T>, renderer: (modelItem: T, index: number, parent: D3BindSelector) => void): D3BindSelector {
-    new BindRepeat<T>(modelList, renderer, this);
+function bindRepeat<T>(modelList: ObservableList<T>, renderer: BindRepeatRenderer<T>, options?: BindRepeatOptions): D3BindSelector {
+    new BindRepeat<T>(modelList, renderer, options, this);
     return this;
 }
 selector.bindRepeat = bindRepeat;
