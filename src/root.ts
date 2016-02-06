@@ -9,6 +9,8 @@ export interface D3Bind {
     selection(): D3BindSelector,
 
     observe(object: any): any,
+    deepObserve(object: any): any,
+
     wrap(selector: D3Selector): D3BindSelector
 }
 
