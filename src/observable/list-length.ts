@@ -14,7 +14,8 @@ export default class ObservableListLength extends AbstractObservable<number> {
             },
             remove: () => {
                 this._trigger(_list.length, _list.length + 1);
-            }
+            },
+            replace: () => {}
         });
     }
 

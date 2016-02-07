@@ -1,4 +1,5 @@
 import ObservableListLength from './list-length';
+import ObservableListIndex from "./list-index";
 
 
 export interface ObservableListHandler<T> {
@@ -74,13 +75,17 @@ export default class ObservableList<T> {
         });
     }
 
-    // length subscribing:
+    // bindings:
 
     get $length() {
         return this._observableLength;
     }
 
-    // additional Array methods:
+    $index(index: number) {
+        return new ObservableListIndex<T>(this, index);
+    }
+
+    // basic List methods:
 
     get(index: number) {
         return this._array[index];
@@ -104,7 +109,9 @@ export default class ObservableList<T> {
         if (index >= 0) {
             this._array.splice(index, 1);
             this._triggerRemove(item, index);
+            return true;
         }
+        return false;
     }
 
     // TODO readonly Array methods redirected:
@@ -140,5 +147,48 @@ export default class ObservableList<T> {
         return removedItem;
     }
 
+    splice(start: number, removeCount: number) {
+        // TODO copy the entire 500 lines long splice polifyll here...
+
+        if (start > this.length) {
+            start = this.length;
+        } else if (start < 0) {
+            if (-start > this.length) {
+                start = 0;
+            } else {
+                start = this.length - start;
+            }
+        }
+        removeCount = removeCount !== undefined ? Math.min(removeCount, this.length - start): this.length - start;
+
+        var removedItems: T[] = [];
+        for (var i = 0; i < removeCount; i++) {
+            var removedItem = this._array.splice(start + i, 1)[0];
+            removedItems.push(removedItem);
+            this._triggerRemove(removedItem, start + i);
+        }
+
+        return removedItems;
+    }
+
     // TODO ES6 iterators
+
+    // static constructors:
+
+    static bindTo<T,U>(source: ObservableList<T>, mapper: (item: T) => U): ObservableList<U>;
+    static bindTo<T>(source: ObservableList<T>): ObservableList<T>;
+    static bindTo<T>(source: ObservableList<T>, mapper?: any) {
+        var result = new ObservableList<any>();
+
+        source.forEach(item => {
+            result.push(item);
+        });
+
+        source.subscribe({
+            insert: (item, index) => { result.insert(index, item); },
+            remove: (item, index) => { result.splice(index, 1); },
+            replace: (item, index, oldValue, caller) => { result.set(index, item, false, caller); }
+        });
+        return result;
+    }
 }

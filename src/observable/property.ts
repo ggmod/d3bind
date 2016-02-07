@@ -44,4 +44,8 @@ export default class ObservableProperty<T> extends AbstractObservable<T> impleme
             this._trigger(value, oldValue, caller);
         }
     }
+
+    static on(parent: any, name: string) {
+        return new ObservableProperty(parent, name);
+    }
 }

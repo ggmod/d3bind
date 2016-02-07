@@ -21,7 +21,7 @@ function toObservable(object: any) {
         return new ObservableValue(object);
     } else {
         for (var key in object) {
-            new ObservableProperty(object, key);
+            ObservableProperty.on(object, key);
         }
         return object;
     }
@@ -36,7 +36,7 @@ function toDeepObservable(object: any) {
     } else {
         for (var key in object) {
             object[key] = toDeepObservable(object[key]);
-            new ObservableProperty(object, key);
+            ObservableProperty.on(object, key);
         }
         return object;
     }
