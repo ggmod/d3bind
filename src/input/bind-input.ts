@@ -1,9 +1,10 @@
 import {bind} from '../bindings/helpers';
 import {WritableObservable} from "../observable/observable";
 import selector, {D3BindSelector} from "../selector";
+import {Primitive} from '../utils';
 
 
-function bindInput(observable: WritableObservable<any>): D3BindSelector {
+function bindInput(observable: WritableObservable<Primitive>): D3BindSelector {
 
     var self = this;
     var propertyName = this.property('type') === 'checkbox' ? 'checked' : 'value';

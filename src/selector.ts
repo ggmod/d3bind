@@ -8,6 +8,20 @@ export type D3Selector = d3.Selection<any>;
 
 export interface D3BindSelector extends D3Selector {
 
+    select(selectorText: string): D3BindSelector,
+    select(func: () => EventTarget): D3BindSelector,
+    selectAll(selectorText: string): D3BindSelector,
+    selectAll(func: () => EventTarget[]): D3BindSelector,
+
+    append(tagName: string): D3BindSelector,
+    append(func: () => EventTarget): D3BindSelector,
+    insert(tagName: string, before: string): D3BindSelector,
+    insert(tagName: string, before: () => EventTarget): D3BindSelector,
+    insert(func: () => EventTarget, before: string): D3BindSelector,
+    insert(func: () => EventTarget, before: () => EventTarget): D3BindSelector,
+    remove(): D3BindSelector,
+
+
     bindText(observable: Observable<string>): D3BindSelector;
     bindText<T>(observable: Observable<T>, converter: (input: T) => string): D3BindSelector;
     bindText(observable: Observable<any>[], converter: (...params: any[]) => string): D3BindSelector;
@@ -34,23 +48,13 @@ export interface D3BindSelector extends D3Selector {
 
     bindCall(observable: Observable<any> | Observable<any>[], func: (selector: D3BindSelector) => void): D3BindSelector;
 
-    select(selectorText: string): D3BindSelector,
-    select(func: () => EventTarget): D3BindSelector,
-    selectAll(selectorText: string): D3BindSelector,
-    selectAll(func: () => EventTarget[]): D3BindSelector,
-
-    append(tagName: string): D3BindSelector,
-    append(func: () => EventTarget): D3BindSelector,
-    insert(tagName: string, before: string): D3BindSelector,
-    insert(tagName: string, before: () => EventTarget): D3BindSelector,
-    insert(func: () => EventTarget, before: string): D3BindSelector,
-    insert(func: () => EventTarget, before: () => EventTarget): D3BindSelector,
-    remove(): D3BindSelector,
+    bindInput(observable: WritableObservable<Primitive>): D3BindSelector
 
     repeat<T>(modelList: ArrayLike<T>, renderer: (modelItem: T, index: number, parent: D3BindSelector) => void): D3BindSelector,
     bindRepeat<T>(modelList: ObservableList<T>, renderer: BindRepeatRenderer<T>, options?: BindRepeatOptions): D3BindSelector,
 
-    bindInput(observable: WritableObservable<any>): D3BindSelector
+    bindRedraw<T>(observable: Observable<T>, renderer: (model: T, parent: D3BindSelector) => void): D3BindSelector;
+    bindRedraw(observable: Observable<any>[], renderer: (...params: any[]) => void): D3BindSelector;
 }
 
 const d3bindSelector: D3BindSelector = <D3BindSelector>{};

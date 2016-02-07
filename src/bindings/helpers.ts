@@ -19,7 +19,7 @@ function getBoundValue<V>(observable: any, converter: any): V {
 function callEvery(func: Noop | Noop[]) {
     if (func instanceof Array) {
         func.forEach((funcItem: ()=> void) => { funcItem(); });
-    } else if (func instanceof  Function) {
+    } else if (func instanceof Function) {
         func();
     }
 }

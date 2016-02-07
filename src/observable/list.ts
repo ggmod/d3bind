@@ -114,7 +114,7 @@ export default class ObservableList<T> {
         return false;
     }
 
-    // TODO readonly Array methods redirected:
+    // readonly Array methods redirected:
 
     forEach(callback: (value: T, index: number, array: ObservableList<T>) => void): void {
         this._array.forEach((value, index) => {
@@ -130,21 +130,86 @@ export default class ObservableList<T> {
         return ObservableList.of(this._array.filter((item, index) => callback(item, index, this)));
     }
 
-    // TODO writing Array methods rewritten:
+    reduce(callback: (previousValue: T, currentValue: T, currentIndex: number, array: ObservableList<T>) => T, initialValue?: T): T;
+    reduce<U>(callback: (previousValue: U, currentValue: T, currentIndex: number, array: ObservableList<T>) => U, initialValue: U): U;
+    reduce(callback: (previousValue: any, currentValue: T, currentIndex: number, array: ObservableList<T>) => any, initialValue: any): any {
+        return this._array.reduce((previousValue, currentValue, currentIndex) => callback(previousValue, currentValue, currentIndex, this), initialValue);
+    }
+
+    reduceRight(callback: (previousValue: T, currentValue: T, currentIndex: number, array: ObservableList<T>) => T, initialValue?: T): T;
+    reduceRight<U>(callback: (previousValue: U, currentValue: T, currentIndex: number, array: ObservableList<T>) => U, initialValue: U): U;
+    reduceRight(callback: (previousValue: any, currentValue: T, currentIndex: number, array: ObservableList<T>) => any, initialValue: any): any {
+        return this._array.reduceRight((previousValue, currentValue, currentIndex) => callback(previousValue, currentValue, currentIndex, this), initialValue);
+    }
+
+    concat<U extends T[]>(...items: U[]): ObservableList<T>;
+    concat(...items: T[]): ObservableList<T>;
+    concat(...items: any[]): ObservableList<T> {
+        return ObservableList.of(this._array.concat(items));
+    }
+
+    slice(start?: number, end?: number): ObservableList<T> {
+        return ObservableList.of(this._array.slice(start, end));
+    }
+
+    join(separator?: string): string {
+        return this._array.join(separator);
+    }
+
+    every(callback: (value: T, index: number, array: T[]) => boolean): boolean {
+        return this._array.every(callback);
+    }
+
+    some(callback: (value: T, index: number, array: T[]) => boolean): boolean {
+        return this._array.some(callback);
+    }
+
+    indexOf(searchElement: T, fromIndex?: number): number {
+        return this._array.indexOf(searchElement, fromIndex);
+    }
+
+    lastIndexOf(searchElement: T, fromIndex?: number): number {
+        return this._array.lastIndexOf(searchElement, fromIndex);
+    }
+
+    toString(): string {
+        return this._array.toString();
+    }
+
+    toLocaleString(): string {
+        return this._array.toLocaleString();
+    }
+
+    // TODO write the missing Array mutator methods (reverse, sort) :
 
     push(...items: T[]): number {
-        this._array.push(...items);
         for (var i = 0; i < items.length; i++) {
-            this._triggerInsert(items[i], this.length + i);
+            this._array.push(items[i]);
+            this._triggerInsert(items[i], this.length - 1);
         }
-        return this.length + items.length;
+        return this.length;
     }
 
     pop(): T {
         if (this.length === 0) return;
         var removedItem = this._array.pop();
-        this._triggerRemove(removedItem, this.length - 1);
+        this._triggerRemove(removedItem, this.length);
         return removedItem;
+    }
+
+    shift(): T {
+        if (this.length === 0) return;
+        var removedItem = this._array.shift();
+        this._triggerRemove(removedItem, 0);
+        return removedItem;
+    }
+
+    unshift(...items: T[]): number {
+        for (var i = items.length - 1; i >= 0; i--) {
+            this._array.splice(0, 0, items[i]);
+            this._triggerInsert(items[i], 0);
+        }
+        return this.length;
     }
 
     splice(start: number, removeCount: number) {
@@ -171,7 +236,7 @@ export default class ObservableList<T> {
         return removedItems;
     }
 
-    // TODO ES6 iterators
+    // TODO ES6 iterators and functions
 
     // static constructors:
 
