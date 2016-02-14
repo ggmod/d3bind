@@ -1,5 +1,5 @@
 import {D3Selector, D3BindSelector} from "./selector";
-import ObservableList from './observable/list';
+import ObservableArray from './observable/array';
 import ObservableMap from './observable/map';
 import ObservableValue from './observable/value';
 import ObservableProperty from './observable/property';
@@ -19,7 +19,7 @@ export interface D3Bind {
     observe(object: any): any,
     deepObserve(object: any): any,
 
-    ObservableList: typeof ObservableList,
+    ObservableArray: typeof ObservableArray,
     ObservableMap: typeof ObservableMap,
     ObservableProperty: typeof ObservableProperty,
     ObservableValue: typeof ObservableValue
@@ -30,7 +30,7 @@ export interface D3Bind {
 
 const d3bind: D3Bind = <D3Bind>{};
 
-d3bind.ObservableList = ObservableList;
+d3bind.ObservableArray = ObservableArray;
 d3bind.ObservableMap = ObservableMap;
 d3bind.ObservableProperty = ObservableProperty;
 d3bind.ObservableValue = ObservableValue;

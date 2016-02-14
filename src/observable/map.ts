@@ -1,6 +1,6 @@
 import ObservableMapSize from './map-size';
 import ObservableMapKey from './map-key';
-import ObservableList from './list';
+import ObservableArray from './array';
 
 
 export interface ObservableMapHandler<K, V> {
@@ -135,9 +135,9 @@ export default class ObservableMap<K, V> {
 
     // static constructors:
 
-    static bindTo<T,K,V>(source: ObservableList<T>, keyMapper: (item: T) => K, valueMapper: (item: T) => V): ObservableMap<K,V>;
-    static bindTo<T,K>(source: ObservableList<T>, keyMapper: (item: T) => K): ObservableMap<K,T>;
-    static bindTo<T,K>(source: ObservableList<T>, keyMapper: (item: T) => K, valueMapper?: any): ObservableMap<K,any> {
+    static bindTo<T,K,V>(source: ObservableArray<T>, keyMapper: (item: T) => K, valueMapper: (item: T) => V): ObservableMap<K,V>;
+    static bindTo<T,K>(source: ObservableArray<T>, keyMapper: (item: T) => K): ObservableMap<K,T>;
+    static bindTo<T,K>(source: ObservableArray<T>, keyMapper: (item: T) => K, valueMapper?: any): ObservableMap<K,any> {
         var result = new ObservableMap<K,any>();
 
         source.forEach((item) => {

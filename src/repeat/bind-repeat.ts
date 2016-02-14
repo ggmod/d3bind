@@ -1,5 +1,5 @@
 import selector, {D3Selector, D3BindSelector} from "../selector";
-import ObservableList from "../observable/list";
+import ObservableArray from "../observable/array";
 import Observable, {ObservableHandler} from '../observable/observable'
 import BindRepeatIndexProxy from './bind-repeat-index';
 import BindRepeatDatumProxy from "./bind-repeat-datum";
@@ -47,7 +47,7 @@ export default class BindRepeat<T> {
     itemCounter = 0;
 
     constructor(
-        public modelList: ObservableList<T>,
+        public modelList: ObservableArray<T>,
         private renderer: BindRepeatRenderer<T>,
         private options: BindRepeatOptions = <BindRepeatOptions>{},
         private selector: D3BindSelector
@@ -220,7 +220,7 @@ export default class BindRepeat<T> {
     }
 }
 
-function bindRepeat<T>(modelList: ObservableList<T>, renderer: BindRepeatRenderer<T>, options?: BindRepeatOptions): D3BindSelector {
+function bindRepeat<T>(modelList: ObservableArray<T>, renderer: BindRepeatRenderer<T>, options?: BindRepeatOptions): D3BindSelector {
     new BindRepeat<T>(modelList, renderer, options, this);
     return this;
 }

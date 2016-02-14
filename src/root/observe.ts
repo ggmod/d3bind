@@ -1,5 +1,5 @@
 import ObservableProperty from "../observable/property";
-import ObservableList from '../observable/list';
+import ObservableArray from '../observable/array';
 import ObservableValue from '../observable/value';
 import d3bind from '../root';
 
@@ -16,7 +16,7 @@ function isSingleValue(value: any) {
 
 function toObservable(object: any) {
     if (Array.isArray(object)) {
-        return ObservableList.of(object);
+        return ObservableArray.of(object);
     } else if(isSingleValue(object)) {
         return new ObservableValue(object);
     } else {
@@ -30,7 +30,7 @@ function toObservable(object: any) {
 function toDeepObservable(object: any) {
     if (Array.isArray(object)) {
         var obsItems = object.map((item: any) => toDeepObservable(item));
-        return ObservableList.of(obsItems);
+        return ObservableArray.of(obsItems);
     } else if(isSingleValue(object)) {
         return object;
     } else {

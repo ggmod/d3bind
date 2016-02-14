@@ -1,11 +1,11 @@
 import {ObservableHandler} from './observable';
-import ObservableList from './list';
+import ObservableArray from './array';
 import AbstractObservable from './abstract';
 
 
-export default class ObservableListLength extends AbstractObservable<number> {
+export default class ObservableArrayLength extends AbstractObservable<number> {
 
-    constructor(private _list: ObservableList<any>) {
+    constructor(private _list: ObservableArray<any>) {
         super();
 
         _list.subscribe({

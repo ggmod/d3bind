@@ -1,18 +1,18 @@
-import ObservableListLength from './list-length';
-import ObservableListIndex from "./list-index";
+import ObservableArrayLength from './array-length';
+import ObservableArrayIndex from "./array-index";
 
 
-export interface ObservableListHandler<T> {
+export interface ObservableArrayHandler<T> {
     insert: (item: T, index: number) => void,
     remove: (item: T, index: number) => void,
     replace?: (item: T, index: number, oldValue: T, caller?: any) => void
 }
 
-export default class ObservableList<T> {
+export default class ObservableArray<T> {
 
     private _array: T[] = [];
-    private _subscribers: ObservableListHandler<T>[] = [];
-    private _observableLength: ObservableListLength;
+    private _subscribers: ObservableArrayHandler<T>[] = [];
+    private _observableLength: ObservableArrayLength;
 
     get array() {
         return this._array;
@@ -22,24 +22,24 @@ export default class ObservableList<T> {
         return this._array.length;
     }
 
-    static of<T>(array: Array<T>): ObservableList<T> {
-        var list = new ObservableList<T>();
-        list._array = array;
-        return list;
+    static of<T>(array: Array<T>): ObservableArray<T> {
+        var obsArray = new ObservableArray<T>();
+        obsArray._array = array;
+        return obsArray;
     }
 
     constructor() {
-        this._observableLength = new ObservableListLength(this);
+        this._observableLength = new ObservableArrayLength(this);
     }
 
     // subscribing:
 
-    subscribe(handler: ObservableListHandler<T>): () => void {
+    subscribe(handler: ObservableArrayHandler<T>): () => void {
         this._subscribers.push(handler);
         return function() { this.unsubscribe(handler); };
     }
 
-    unsubscribe(handler: ObservableListHandler<T>): boolean {
+    unsubscribe(handler: ObservableArrayHandler<T>): boolean {
         var index = this._subscribers.indexOf(handler);
         if (index >= 0) {
             this._subscribers.splice(index, 1);
@@ -82,10 +82,10 @@ export default class ObservableList<T> {
     }
 
     $index(index: number) {
-        return new ObservableListIndex<T>(this, index);
+        return new ObservableArrayIndex<T>(this, index);
     }
 
-    // basic List methods:
+    // basic Array methods:
 
     get(index: number) {
         return this._array[index];
@@ -116,40 +116,40 @@ export default class ObservableList<T> {
 
     // readonly Array methods redirected:
 
-    forEach(callback: (value: T, index: number, array: ObservableList<T>) => void): void {
+    forEach(callback: (value: T, index: number, array: ObservableArray<T>) => void): void {
         this._array.forEach((value, index) => {
             callback.call(null, value, index, this);
         });
     }
 
-    map<U>(callback: (value: T, index: number, array: ObservableList<T>) => U): ObservableList<U> {
-        return ObservableList.of(this._array.map((item, index) => callback(item, index, this)));
+    map<U>(callback: (value: T, index: number, array: ObservableArray<T>) => U): ObservableArray<U> {
+        return ObservableArray.of(this._array.map((item, index) => callback(item, index, this)));
     }
 
-    filter(callback: (value: T, index: number, array: ObservableList<T>) => boolean): ObservableList<T> {
-        return ObservableList.of(this._array.filter((item, index) => callback(item, index, this)));
+    filter(callback: (value: T, index: number, array: ObservableArray<T>) => boolean): ObservableArray<T> {
+        return ObservableArray.of(this._array.filter((item, index) => callback(item, index, this)));
     }
 
-    reduce(callback: (previousValue: T, currentValue: T, currentIndex: number, array: ObservableList<T>) => T, initialValue?: T): T;
-    reduce<U>(callback: (previousValue: U, currentValue: T, currentIndex: number, array: ObservableList<T>) => U, initialValue: U): U;
-    reduce(callback: (previousValue: any, currentValue: T, currentIndex: number, array: ObservableList<T>) => any, initialValue: any): any {
+    reduce(callback: (previousValue: T, currentValue: T, currentIndex: number, array: ObservableArray<T>) => T, initialValue?: T): T;
+    reduce<U>(callback: (previousValue: U, currentValue: T, currentIndex: number, array: ObservableArray<T>) => U, initialValue: U): U;
+    reduce(callback: (previousValue: any, currentValue: T, currentIndex: number, array: ObservableArray<T>) => any, initialValue: any): any {
         return this._array.reduce((previousValue, currentValue, currentIndex) => callback(previousValue, currentValue, currentIndex, this), initialValue);
     }
 
-    reduceRight(callback: (previousValue: T, currentValue: T, currentIndex: number, array: ObservableList<T>) => T, initialValue?: T): T;
-    reduceRight<U>(callback: (previousValue: U, currentValue: T, currentIndex: number, array: ObservableList<T>) => U, initialValue: U): U;
-    reduceRight(callback: (previousValue: any, currentValue: T, currentIndex: number, array: ObservableList<T>) => any, initialValue: any): any {
+    reduceRight(callback: (previousValue: T, currentValue: T, currentIndex: number, array: ObservableArray<T>) => T, initialValue?: T): T;
+    reduceRight<U>(callback: (previousValue: U, currentValue: T, currentIndex: number, array: ObservableArray<T>) => U, initialValue: U): U;
+    reduceRight(callback: (previousValue: any, currentValue: T, currentIndex: number, array: ObservableArray<T>) => any, initialValue: any): any {
         return this._array.reduceRight((previousValue, currentValue, currentIndex) => callback(previousValue, currentValue, currentIndex, this), initialValue);
     }
 
-    concat<U extends T[]>(...items: U[]): ObservableList<T>;
-    concat(...items: T[]): ObservableList<T>;
-    concat(...items: any[]): ObservableList<T> {
-        return ObservableList.of(this._array.concat(items));
+    concat<U extends T[]>(...items: U[]): ObservableArray<T>;
+    concat(...items: T[]): ObservableArray<T>;
+    concat(...items: any[]): ObservableArray<T> {
+        return ObservableArray.of(this._array.concat(items));
     }
 
-    slice(start?: number, end?: number): ObservableList<T> {
-        return ObservableList.of(this._array.slice(start, end));
+    slice(start?: number, end?: number): ObservableArray<T> {
+        return ObservableArray.of(this._array.slice(start, end));
     }
 
     join(separator?: string): string {
@@ -240,10 +240,10 @@ export default class ObservableList<T> {
 
     // static constructors:
 
-    static bindTo<T,U>(source: ObservableList<T>, mapper: (item: T) => U): ObservableList<U>;
-    static bindTo<T>(source: ObservableList<T>): ObservableList<T>;
-    static bindTo<T>(source: ObservableList<T>, mapper?: any) {
-        var result = new ObservableList<any>();
+    static bindTo<T,U>(source: ObservableArray<T>, mapper: (item: T) => U): ObservableArray<U>;
+    static bindTo<T>(source: ObservableArray<T>): ObservableArray<T>;
+    static bindTo<T>(source: ObservableArray<T>, mapper?: any) {
+        var result = new ObservableArray<any>();
 
         source.forEach(item => {
             result.push(item);

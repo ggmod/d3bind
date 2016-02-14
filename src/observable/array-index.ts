@@ -1,11 +1,11 @@
-import ObservableList from './list';
+import ObservableArray from './array';
 import AbstractObservable from './abstract';
 import WritableObservable from "./observable";
 
 
-export default class ObservableListIndex<T> extends AbstractObservable<T> implements WritableObservable<T> {
+export default class ObservableArrayIndex<T> extends AbstractObservable<T> implements WritableObservable<T> {
 
-    constructor(private _list: ObservableList<T>, private _index: number) {
+    constructor(private _list: ObservableArray<T>, private _index: number) {
         super();
 
         _list.subscribe({
