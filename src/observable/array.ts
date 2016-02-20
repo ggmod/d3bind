@@ -34,9 +34,9 @@ export default class ObservableArray<T> {
 
     // subscribing:
 
-    subscribe(handler: ObservableArrayHandler<T>): () => void {
+    subscribe(handler: ObservableArrayHandler<T>): () => boolean {
         this._subscribers.push(handler);
-        return function() { this.unsubscribe(handler); };
+        return () => this.unsubscribe(handler);
     }
 
     unsubscribe(handler: ObservableArrayHandler<T>): boolean {

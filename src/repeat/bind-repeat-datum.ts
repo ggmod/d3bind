@@ -11,7 +11,7 @@ export default class BindRepeatDatumProxy<T> extends AbstractObservable<T> imple
         super();
     }
 
-    subscribe(handler: ObservableHandler<T>): () => void {
+    subscribe(handler: ObservableHandler<T>): () => boolean {
         this.bindRepeat.datumSubscriberCount++;
         return super.subscribe(handler);
     }
@@ -26,7 +26,7 @@ export default class BindRepeatDatumProxy<T> extends AbstractObservable<T> imple
 
     unsubscribeAll() {
         this.bindRepeat.datumSubscriberCount -= this._subscribers.length;
-        super.unsubscribeAll();
+        return super.unsubscribeAll();
     }
 
     // override private to public

@@ -1,5 +1,6 @@
 import {override, addBindingFunctionsToSelector} from './override-utils';
 import selector, {D3Selector, D3BindSelector} from "../selector";
+import {unbindSelector} from '../bindings/unbind';
 
 
 function append(func: () => EventTarget): D3BindSelector;
@@ -36,9 +37,13 @@ function selectAll(param: any): D3BindSelector {
 selector.selectAll = selectAll;
 
 
-selector.remove = function(): D3BindSelector {
+selector.remove = function(unbind = true): D3BindSelector {
     var _super: D3Selector = Object.getPrototypeOf(this);
     _super.remove(); // detaches it from the DOM
-    // TODO: unbind
+
+    if (unbind) {
+        unbindSelector(this, true);
+    }
+
     return this;
 };

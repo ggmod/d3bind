@@ -3,9 +3,9 @@ export type ObservableHandler<T> = (newValue: T, oldValue: T, caller?: any) => v
 
 export interface Observable<T> {
     get() : T,
-    subscribe(handler: ObservableHandler<T>): () => void,
+    subscribe(handler: ObservableHandler<T>): () => boolean,
     unsubscribe(handler: ObservableHandler<T>): boolean,
-    unsubscribeAll(): void,
+    unsubscribeAll(): number,
     trigger(): void
 }
 

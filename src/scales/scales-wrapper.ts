@@ -1,5 +1,6 @@
 import {addObservableSetter} from '../bindings/setter';
 import {ObservableScales, ObservableTimeScales} from "./scales-interface";
+import {unbindObject} from '../bindings/unbind';
 
 
 function observableScale(source: any, ctor: any) {
@@ -10,6 +11,11 @@ function observableScale(source: any, ctor: any) {
     addObservableSetter(source, scale, 'range');
 
     scale.copy = () => ctor(source.copy());
+
+    scale.unbind = () => {
+        unbindObject(scale);
+        return scale;
+    };
 
     return scale;
 }

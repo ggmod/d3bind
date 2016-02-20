@@ -5,9 +5,9 @@ abstract class AbstractObservable<T> implements Observable<T> {
 
     protected _subscribers: ObservableHandler<T>[] = [];
 
-    subscribe(handler: ObservableHandler<T>): () => void {
+    subscribe(handler: ObservableHandler<T>): () => boolean {
         this._subscribers.push(handler);
-        return function() { this.unsubscribe(handler); };
+        return () => this.unsubscribe(handler);
     }
 
     unsubscribe(handler: ObservableHandler<T>): boolean {
@@ -19,8 +19,10 @@ abstract class AbstractObservable<T> implements Observable<T> {
         return false;
     }
 
-    unsubscribeAll() {
+    unsubscribeAll(): number {
+        var count = this._subscribers.length;
         this._subscribers = [];
+        return count;
     }
 
     protected _trigger(newValue: T, oldValue: T, caller?: any) {

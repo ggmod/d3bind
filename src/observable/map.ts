@@ -31,9 +31,9 @@ export default class ObservableMap<K, V> {
 
     // subscribing:
 
-    subscribe(handler: ObservableMapHandler<K,V>): () => void {
+    subscribe(handler: ObservableMapHandler<K,V>): () => boolean {
         this._subscribers.push(handler);
-        return function() { this.unsubscribe(handler); };
+        return () => this.unsubscribe(handler);
     }
 
     unsubscribe(handler: ObservableMapHandler<K,V>): boolean {

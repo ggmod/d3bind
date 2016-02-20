@@ -1,4 +1,4 @@
-import {bind, bindWithTransition, BindingTransition} from '../bindings/helpers';
+import {bind, bindWithTransition, BindingTransition} from '../bindings/selector';
 import Observable from "../observable/observable";
 import selector, {D3BindSelector} from "../selector";
 import {Primitive} from '../utils';
@@ -22,7 +22,7 @@ function bindHtml(observable: Observable<string>): D3BindSelector;
 function bindHtml<T>(observable: Observable<T>, converter: (input: T) => string): D3BindSelector;
 function bindHtml(observable: Observable<any>[], converter: (...params: any[]) => string): D3BindSelector;
 function bindHtml(observable: any, converter?: any): D3BindSelector {
-    bind(observable, converter, (value: string) => {
+    bind(this, 'html', observable, converter, (value: string) => {
         this.html(value);
     });
     return this;
@@ -33,7 +33,7 @@ function bindClassed(className: string, observable: Observable<string>): D3BindS
 function bindClassed<T>(className: string, observable: Observable<T>, converter?: (input: T) => boolean): D3BindSelector;
 function bindClassed(className: string, observable: Observable<any>[], converter: (...params: any[]) => boolean): D3BindSelector;
 function bindClassed(className: string, observable: any, converter?: any): D3BindSelector {
-    bind(observable, converter, (value: boolean) => {
+    bind(this, 'classed:' + className, observable, converter, (value: boolean) => {
         this.classed(className, value);
     });
     return this;
@@ -72,7 +72,7 @@ function bindProperty(property: string, observable: Observable<Primitive>): D3Bi
 function bindProperty<T>(property: string, observable: Observable<T>, converter?: (input: T) => Primitive): D3BindSelector;
 function bindProperty(property: string, observable: Observable<any>[], converter: (...params: any[]) => Primitive): D3BindSelector;
 function bindProperty(property: string, observable: any, converter?: any): D3BindSelector {
-    bind(observable, converter, (value: Primitive) => {
+    bind(this, 'property:' + property, observable, converter, (value: Primitive) => {
         this.property(property, value);
     });
     return this;

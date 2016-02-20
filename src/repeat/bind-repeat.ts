@@ -4,7 +4,10 @@ import Observable, {ObservableHandler} from '../observable/observable'
 import BindRepeatIndexProxy from './bind-repeat-index';
 import BindRepeatDatumProxy from "./bind-repeat-datum";
 import WritableObservable from "../observable/observable";
+import {setUnbindForSelectorField, unbindSelectorField} from '../bindings/unbind';
 
+
+const REPEAT_PREFIX = '__d3bind_repeat';
 
 enum BindRepeatEvent {
     BUILD,
@@ -57,11 +60,13 @@ export default class BindRepeat<T> {
 
         this.build();
 
-        modelList.subscribe({
+        var unsubscribeFunc = modelList.subscribe({
             insert: (item, index) => { this.onInsert(item, index); },
             remove: (item, index) => { this.onRemove(item, index); },
             replace: options.customReplace ? (item, index, oldValue, caller) => { this.onReplace(item, index, oldValue, caller); } : undefined
         });
+
+        setUnbindForSelectorField(selector, 'repeat', () => unsubscribeFunc() ? 1 : 0);
     }
 
     _createRepeatItem() {
@@ -126,6 +131,9 @@ export default class BindRepeat<T> {
 
         itemToRemove.selector.remove();
         itemToRemove.indexProxy.unsubscribeAll();
+        if (itemToRemove.datumProxy) {
+            itemToRemove.datumProxy.unsubscribeAll();
+        }
 
         this.currentEvent = BindRepeatEvent.REMOVE_REINDEXING;
         this.updateIndexes();
@@ -221,7 +229,23 @@ export default class BindRepeat<T> {
 }
 
 function bindRepeat<T>(modelList: ObservableArray<T>, renderer: BindRepeatRenderer<T>, options?: BindRepeatOptions): D3BindSelector {
-    new BindRepeat<T>(modelList, renderer, options, this);
+    this.node()[REPEAT_PREFIX] = new BindRepeat<T>(modelList, renderer, options, this);
     return this;
 }
 selector.bindRepeat = bindRepeat;
+
+
+selector.unbindRedraw = function(): D3BindSelector {
+    unbindSelectorField(this, 'repeat');
+
+    var repeatItems: BindRepeatItem<any>[] = this.node()[REPEAT_PREFIX].repeatItems;
+
+    repeatItems.forEach(repeatItem => {
+        repeatItem.indexProxy.unsubscribeAll();
+        if (repeatItem.datumProxy) {
+            repeatItem.datumProxy.unsubscribeAll();
+        }
+    });
+
+    return this;
+};

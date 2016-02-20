@@ -12,7 +12,10 @@ export interface ObservableScale<Domain, Range, Output> {
     bindDomain<T>(observable: Observable<T>, converter: (input: T) => Domain[]): this,
     bindDomain(observable: Observable<any>[], converter: (...params: any[]) => Domain[]): this;
 
+    unbindDomain(): this;
+
     $domain: WritableObservable<Domain[]>
+
 
     range(): Range[],
     range(range: Range[]): this,
@@ -21,9 +24,14 @@ export interface ObservableScale<Domain, Range, Output> {
     bindRange<T>(observable: Observable<T>, converter: (input: T) => Range[]): this,
     bindRange(observable: Observable<any>[], converter: (...params: any[]) => Range[]): this;
 
+    unbindRange(): this;
+
     $range: WritableObservable<Range[]>
 
+
     copy(): this
+
+    unbind(): this;
 }
 
 export interface ObservableInvertibleScale<Domain, Range, Output> extends ObservableScale<Domain, Range, Output> {
@@ -47,6 +55,8 @@ export interface ObservableMathScale<Domain, Range, Output> extends ObservableIn
     bindInterpolate<T>(observable: Observable<T>, converter: (input: T) => interpolateFactory<Range, Output>): this,
     bindInterpolate(observable: Observable<any>[], converter: (...params: any[]) => interpolateFactory<Range, Output>): this;
 
+    unbindInterpolate(): this;
+
     $interpolate: WritableObservable<interpolateFactory<Range, Output>>
 
 
@@ -56,6 +66,8 @@ export interface ObservableMathScale<Domain, Range, Output> extends ObservableIn
     bindClamp(observable: Observable<boolean>): this,
     bindClamp<T>(observable: Observable<T>, converter: (input: T) => boolean): this,
     bindClamp(observable: Observable<any>[], converter: (...params: any[]) => boolean): this;
+
+    unbindClamp(): this;
 
     $clamp: WritableObservable<boolean>
 
@@ -76,6 +88,8 @@ export interface ObservablePowScale<Range, Output> extends ObservableMathScale<n
     bindExponent<T>(observable: Observable<T>, converter: (input: T) => number): this,
     bindExponent(observable: Observable<any>[], converter: (...params: any[]) => number): this;
 
+    unbindExponent(): this;
+
     $exponent: WritableObservable<number>,
 }
 
@@ -86,6 +100,8 @@ export interface ObservableLogScale<Range, Output> extends ObservableMathScale<n
     bindBase(observable: Observable<number>): this,
     bindBase<T>(observable: Observable<T>, converter: (input: T) => number): this,
     bindBase(observable: Observable<any>[], converter: (...params: any[]) => number): this;
+
+    unbindBase(): this;
 
     $base: WritableObservable<number>,
 

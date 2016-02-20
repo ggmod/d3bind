@@ -10,7 +10,7 @@ export default class BindRepeatIndexProxy extends AbstractObservable<number> {
         super();
     }
 
-    subscribe(handler: ObservableHandler<number>): () => void {
+    subscribe(handler: ObservableHandler<number>): () => boolean {
         this.bindRepeat.indexSubscriberCount++;
         return super.subscribe(handler);
     }
@@ -25,7 +25,7 @@ export default class BindRepeatIndexProxy extends AbstractObservable<number> {
 
     unsubscribeAll() {
         this.bindRepeat.indexSubscriberCount -= this._subscribers.length;
-        super.unsubscribeAll();
+        return super.unsubscribeAll();
     }
 
     _trigger(caller?: any) {
