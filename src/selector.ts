@@ -2,6 +2,7 @@ import Observable, {WritableObservable} from "./observable/observable";
 import ObservableArray from "./observable/array";
 import {Primitive} from './utils';
 import {BindRepeatRenderer, BindRepeatOptions} from './repeat/bind-repeat';
+import {BindingTransition} from './bindings/helpers';
 
 
 export type D3Selector = d3.Selection<any>;
@@ -22,9 +23,9 @@ export interface D3BindSelector extends D3Selector {
     remove(): D3BindSelector,
 
 
-    bindText(observable: Observable<string>): D3BindSelector;
-    bindText<T>(observable: Observable<T>, converter: (input: T) => string): D3BindSelector;
-    bindText(observable: Observable<any>[], converter: (...params: any[]) => string): D3BindSelector;
+    bindText(observable: Observable<string>, transition?: BindingTransition): D3BindSelector;
+    bindText<T>(observable: Observable<T>, converter: (input: T) => string, transition?: BindingTransition): D3BindSelector;
+    bindText(observable: Observable<any>[], converter: (...params: any[]) => string, transition?: BindingTransition): D3BindSelector;
 
     bindHtml(observable: Observable<string>): D3BindSelector;
     bindHtml<T>(observable: Observable<T>, converter: (input: T) => string): D3BindSelector;
@@ -34,13 +35,13 @@ export interface D3BindSelector extends D3Selector {
     bindClassed<T>(className: string, observable: Observable<T>, converter: (input: T) => boolean): D3BindSelector,
     bindClassed(className: string, observable: Observable<any>[], converter: (...params: any[]) => boolean): D3BindSelector;
 
-    bindStyle(styleName: string, observable: Observable<Primitive>): D3BindSelector,
-    bindStyle<T>(styleName: string, observable: Observable<T>, converter: (input: T) => Primitive): D3BindSelector,
-    bindStyle(styleName: string, observable: Observable<any>[], converter: (...params: any[]) => Primitive): D3BindSelector;
+    bindStyle(styleName: string, observable: Observable<Primitive>, transition?: BindingTransition): D3BindSelector,
+    bindStyle<T>(styleName: string, observable: Observable<T>, converter: (input: T) => Primitive, transition?: BindingTransition): D3BindSelector,
+    bindStyle(styleName: string, observable: Observable<any>[], converter: (...params: any[]) => Primitive, transition?: BindingTransition): D3BindSelector;
 
-    bindAttr(attr: string, observable: Observable<Primitive>): D3BindSelector,
-    bindAttr<T>(attr: string, observable: Observable<T>, converter: (input: T) => Primitive): D3BindSelector,
-    bindAttr(attr: string, observable: Observable<any>[], converter: (...params: any[]) => Primitive): D3BindSelector;
+    bindAttr(attr: string, observable: Observable<Primitive>, transition?: BindingTransition): D3BindSelector,
+    bindAttr<T>(attr: string, observable: Observable<T>, converter: (input: T) => Primitive, transition?: BindingTransition): D3BindSelector,
+    bindAttr(attr: string, observable: Observable<any>[], converter: (...params: any[]) => Primitive, transition?: BindingTransition): D3BindSelector;
 
     bindProperty(property: string, observable: Observable<Primitive>): D3BindSelector,
     bindProperty<T>(property: string, observable: Observable<T>, converter: (input: T) => Primitive): D3BindSelector,

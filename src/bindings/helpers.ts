@@ -1,6 +1,7 @@
 import Observable from "../observable/observable";
 import {ObservableHandler} from "../observable/observable";
 import {Noop} from '../utils';
+import {D3BindSelector} from "../selector";
 
 
 function getBoundValue<V, T>(observable : Observable<T>, converter?: (input: T) => V): V;
@@ -36,12 +37,40 @@ export function subscribe(observable: Observable<any> | Observable<any>[], handl
     return () => { callEvery(unbind) };
 }
 
-export function bind<V, T>(observable : Observable<T>, converter: (input: T) => V, applyFunc: (input: V, caller?: any) => void): Noop;
-export function bind<V>(observable: Observable<any>[], converter: (...params: any[]) => V, applyFunc: (input: V, caller?: any) => void): Noop;
-export function bind<V>(observable: any, converter: any, applyFunc: (input: V, caller?: any) => void): Noop {
+
+type BindingApplyFunc<T> = (input: T, caller?: any) => void;
+
+export function bind<V, T>(observable : Observable<T>, converter: (input: T) => V, applyFunc: BindingApplyFunc<V>): void;
+export function bind<V>(observable: Observable<any>[], converter: (...params: any[]) => V, applyFunc: BindingApplyFunc<V>): void;
+export function bind<V>(observable: any, converter: any, applyFunc: BindingApplyFunc<V>): void {
     applyFunc(getBoundValue<V>(observable, converter));
 
-    return subscribe(observable, (newValue, oldValue, caller) => {
+    subscribe(observable, (newValue, oldValue, caller) => {
         applyFunc(getBoundValue<V>(observable, converter), caller);
+    });
+}
+
+
+export interface BindingTransition {
+    transition: (t: d3.Transition<any>) => d3.Transition<any> | boolean
+}
+
+type BindingWithTransitionApplyFunc<T> = (selector: d3.Selection<any> | d3.Transition<any>, value: T, caller?: any) => void;
+
+export function bindWithTransition<V, T>(selector: D3BindSelector, name: string, observable : Observable<T>, converter: (input: T) => V, transition: BindingTransition, applyFunc: BindingWithTransitionApplyFunc<V>): void;
+export function bindWithTransition<V>(selector: D3BindSelector, name: string, observable: Observable<any>[], converter: (...params: any[]) => V, transition: BindingTransition, applyFunc: BindingWithTransitionApplyFunc<V>): void;
+export function bindWithTransition<V>(selector: D3BindSelector, name: string, observable: any, converter: any, transition: BindingTransition, applyFunc: BindingWithTransitionApplyFunc<V>): void {
+    name = 'd3bind_' + name;
+
+    applyFunc(selector, getBoundValue<V>(observable, converter));
+
+    subscribe(observable, (newValue, oldValue, caller) => {
+        var _selector: d3.Selection<any> | d3.Transition<any> = null;
+        if (transition && transition.transition) {
+            _selector = typeof transition.transition === 'function' ? <any>transition.transition(selector.transition(name)) : selector.transition(name);
+        } else {
+            _selector = selector;
+        }
+        applyFunc(_selector, getBoundValue<V>(observable, converter), caller);
     });
 }
