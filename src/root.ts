@@ -21,7 +21,6 @@ export interface D3Bind {
 
     ObservableArray: typeof ObservableArray,
     ObservableMap: typeof ObservableMap,
-    ObservableProperty: typeof ObservableProperty,
     ObservableValue: typeof ObservableValue
 
     scale: ObservableScales,
@@ -32,7 +31,6 @@ const d3bind: D3Bind = <D3Bind>{};
 
 d3bind.ObservableArray = ObservableArray;
 d3bind.ObservableMap = ObservableMap;
-d3bind.ObservableProperty = ObservableProperty;
 d3bind.ObservableValue = ObservableValue;
 
 d3bind.scale = scales;

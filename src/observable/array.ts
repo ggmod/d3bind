@@ -22,13 +22,8 @@ export default class ObservableArray<T> {
         return this._array.length;
     }
 
-    static of<T>(array: Array<T>): ObservableArray<T> {
-        var obsArray = new ObservableArray<T>();
-        obsArray._array = array;
-        return obsArray;
-    }
-
-    constructor() {
+    constructor(array?: T[]) {
+        this._array = array || [];
         this._observableLength = new ObservableArrayLength(this);
     }
 
@@ -123,11 +118,11 @@ export default class ObservableArray<T> {
     }
 
     map<U>(callback: (value: T, index: number, array: ObservableArray<T>) => U): ObservableArray<U> {
-        return ObservableArray.of(this._array.map((item, index) => callback(item, index, this)));
+        return new ObservableArray(this._array.map((item, index) => callback(item, index, this)));
     }
 
     filter(callback: (value: T, index: number, array: ObservableArray<T>) => boolean): ObservableArray<T> {
-        return ObservableArray.of(this._array.filter((item, index) => callback(item, index, this)));
+        return new ObservableArray(this._array.filter((item, index) => callback(item, index, this)));
     }
 
     reduce(callback: (previousValue: T, currentValue: T, currentIndex: number, array: ObservableArray<T>) => T, initialValue?: T): T;
@@ -145,11 +140,11 @@ export default class ObservableArray<T> {
     concat<U extends T[]>(...items: U[]): ObservableArray<T>;
     concat(...items: T[]): ObservableArray<T>;
     concat(...items: any[]): ObservableArray<T> {
-        return ObservableArray.of(this._array.concat(items));
+        return new ObservableArray(this._array.concat(items));
     }
 
     slice(start?: number, end?: number): ObservableArray<T> {
-        return ObservableArray.of(this._array.slice(start, end));
+        return new ObservableArray(this._array.slice(start, end));
     }
 
     join(separator?: string): string {
@@ -240,19 +235,21 @@ export default class ObservableArray<T> {
 
     // static constructors:
 
-    static bindTo<T,U>(source: ObservableArray<T>, mapper: (item: T) => U): ObservableArray<U>;
+    static bindTo<T,U>(source: ObservableArray<T>, mapper: (item: T, index: number) => U): ObservableArray<U>;
     static bindTo<T>(source: ObservableArray<T>): ObservableArray<T>;
     static bindTo<T>(source: ObservableArray<T>, mapper?: any) {
+        var map = (item: T, i: number) => mapper ? mapper.call(source, item, i) : item;
+
         var result = new ObservableArray<any>();
 
-        source.forEach(item => {
-            result.push(item);
+        source.forEach((item, i) => {
+            result.push(map(item, i));
         });
 
         source.subscribe({
-            insert: (item, index) => { result.insert(index, item); },
+            insert: (item, index) => { result.insert(index, map(item, index)); },
             remove: (item, index) => { result.splice(index, 1); },
-            replace: (item, index, oldValue, caller) => { result.set(index, item, false, caller); }
+            replace: (item, index, oldValue, caller) => { result.set(index, map(item, index), false, caller); }
         });
         return result;
     }

@@ -221,7 +221,7 @@ describe('Unbind mechanism', () => {
         });
 
         it('bind repeat', () => {
-            var array = new d3bind.ObservableArray.of(['cc', 'aa', 'bb']);
+            var array = new d3bind.ObservableArray(['cc', 'aa', 'bb']);
 
             var div = jsdom.jsdom('<div></div>').querySelector('div');
             var selector = d3bind.select(div).bindRepeat(array, function(d, $i) {

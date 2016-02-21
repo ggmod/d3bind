@@ -16,7 +16,7 @@ function isSingleValue(value: any) {
 
 function toObservable(object: any) {
     if (Array.isArray(object)) {
-        return ObservableArray.of(object);
+        return new ObservableArray(object);
     } else if(isSingleValue(object)) {
         return new ObservableValue(object);
     } else {
@@ -30,7 +30,7 @@ function toObservable(object: any) {
 function toDeepObservable(object: any) {
     if (Array.isArray(object)) {
         var obsItems = object.map((item: any) => toDeepObservable(item));
-        return ObservableArray.of(obsItems);
+        return new ObservableArray(obsItems);
     } else if(isSingleValue(object)) {
         return object;
     } else {
