@@ -14,10 +14,10 @@ gulp.task('clean', function() {
 
 gulp.task('compile', ['clean'], function() {
     return browserify({
-            debug: true
+            debug: true,
+            standalone: 'd3bind'
         })
-        .add('src/main.ts')
-        .add('typings/tsd.d.ts')
+        .add('src/main.ts') // you can only have one entry file ('tsd.d.ts' moved to main.ts)
         .plugin(tsify)
         .bundle()
         .on('error', function (error) { console.error(error.toString()); })

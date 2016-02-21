@@ -235,7 +235,7 @@ function bindRepeat<T>(modelList: ObservableArray<T>, renderer: BindRepeatRender
 selector.bindRepeat = bindRepeat;
 
 
-selector.unbindRedraw = function(): D3BindSelector {
+selector.unbindRepeat = function(): D3BindSelector {
     unbindSelectorField(this, 'repeat');
 
     var repeatItems: BindRepeatItem<any>[] = this.node()[REPEAT_PREFIX].repeatItems;

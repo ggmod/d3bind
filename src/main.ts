@@ -1,4 +1,6 @@
+/// <reference path="../typings/tsd.d.ts" />
+
 import './build';
 import d3bind from './root';
 
-window.d3bind = d3bind;
+export = d3bind; // export default is not translated to "module.exports="
