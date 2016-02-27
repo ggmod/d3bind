@@ -7,7 +7,7 @@ import WritableObservable from "./observable";
 export default class ObservableMapKey<K, V> extends AbstractObservable<V> implements WritableObservable<V> {
 
     constructor(private _map: ObservableMap<K, V>, private _key: K) {
-        super();
+        super(_key.toString());
 
         _map.subscribe({
             insert: (value, key) => {

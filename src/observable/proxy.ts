@@ -4,8 +4,8 @@ import AbstractObservable from "./abstract";
 
 export default class ObservableProxy<T> extends AbstractObservable<T> implements WritableObservable<T> {
 
-    constructor(private _getter: () => T, private _setter: (value: T) => void) {
-        super();
+    constructor(private _getter: () => T, private _setter: (value: T) => void, name?: string) {
+        super(name);
     }
 
     get(): T {

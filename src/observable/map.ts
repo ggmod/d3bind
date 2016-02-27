@@ -1,6 +1,7 @@
 import ObservableMapSize from './map-size';
 import ObservableMapKey from './map-key';
 import ObservableArray from './array';
+import Logger from '../utils/logger';
 
 
 export interface ObservableMapHandler<K, V> {
@@ -16,6 +17,8 @@ export default class ObservableMap<K, V> {
 
     private _subscribers: ObservableMapHandler<K,V>[] = [];
     private _observableSize: ObservableMapSize;
+
+    private _logger = Logger.get((<any>this.constructor).name);
 
     get map() {
         return this._map;
@@ -52,20 +55,30 @@ export default class ObservableMap<K, V> {
     private _triggerInsert(item: V, key: K) {
         this._size++;
 
+        this._logger.logIndent('insert', item, 'key:', key);
+
         this._subscribers.forEach(subscriber => {
             subscriber.insert.call(null, item, key);
         });
+
+        this._logger.logUnindent();
     }
 
     private _triggerRemove(item: V, key: K) {
         this._size--;
 
+        this._logger.logIndent('remove', item, 'key:', key);
+
         this._subscribers.forEach(subscriber => {
             subscriber.remove.call(null, item, key);
         });
+
+        this._logger.logUnindent();
     }
 
     private _triggerReplace(item: V, key: K, oldValue: V, caller?: any) {
+        this._logger.logIndent('replace', item, 'key:', key, 'oldValue:', oldValue, 'caller:', caller);
+
         this._subscribers.forEach(subscriber => {
             if (subscriber.replace != null) {
                 subscriber.replace.call(null, item, key, oldValue, caller);
@@ -74,6 +87,8 @@ export default class ObservableMap<K, V> {
                 subscriber.insert.call(null, item, key);
             }
         });
+
+        this._logger.logUnindent();
     }
 
     // bindings:

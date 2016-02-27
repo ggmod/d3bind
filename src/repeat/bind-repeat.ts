@@ -5,6 +5,7 @@ import BindRepeatIndexProxy from './bind-repeat-index';
 import BindRepeatDatumProxy from "./bind-repeat-datum";
 import WritableObservable from "../observable/observable";
 import {setUnbindForSelectorField, unbindSelectorField} from '../bindings/unbind';
+import Logger from '../utils/logger';
 
 
 const REPEAT_PREFIX = '__d3bind_repeat';
@@ -49,12 +50,15 @@ export default class BindRepeat<T> {
 
     itemCounter = 0;
 
+    logger: Logger;
+
     constructor(
         public modelList: ObservableArray<T>,
         private renderer: BindRepeatRenderer<T>,
         private options: BindRepeatOptions = <BindRepeatOptions>{},
         private selector: D3BindSelector
     ) {
+        this.logger = Logger.get('Selector', 'repeat');
 
         this.selectorProxy = this.createSelectorProxy();
 
@@ -107,6 +111,8 @@ export default class BindRepeat<T> {
     }
 
     onInsert(item: T, index: number) {
+        this.logger.log('insert', item, 'index:', index);
+
         this.currentEvent = BindRepeatEvent.INSERT;
         this.currentIndex = index;
 
@@ -123,6 +129,8 @@ export default class BindRepeat<T> {
     }
 
     onRemove(item: T, index: number) {
+        this.logger.log('remove', item, 'index:', index);
+
         this.currentEvent = BindRepeatEvent.REMOVE;
         this.currentIndex = index;
 
@@ -143,6 +151,8 @@ export default class BindRepeat<T> {
     }
 
     onReplace(item: T, index: number, oldValue: T, caller: any) {
+        this.logger.log('replace', item, 'index:', index, 'oldValue:', oldValue, 'caller:', caller);
+
         this.currentEvent = BindRepeatEvent.REPLACE;
         this.currentIndex = index;
 

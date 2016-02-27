@@ -1,9 +1,15 @@
 import Observable, {ObservableHandler} from "./observable";
+import Logger from '../utils/logger';
 
 
 abstract class AbstractObservable<T> implements Observable<T> {
 
     protected _subscribers: ObservableHandler<T>[] = [];
+    private _logger: Logger;
+
+    constructor(protected _name?: string) {
+        this._logger = Logger.get((<any>this.constructor).name, _name);
+    }
 
     subscribe(handler: ObservableHandler<T>): () => boolean {
         this._subscribers.push(handler);
@@ -26,9 +32,13 @@ abstract class AbstractObservable<T> implements Observable<T> {
     }
 
     protected _trigger(newValue: T, oldValue: T, caller?: any) {
+        this._logger.logIndent(newValue, 'oldValue:', oldValue, 'caller:', caller);
+
         this._subscribers.forEach(subscriber => {
             subscriber.call(null, newValue, oldValue, caller);
         });
+
+        this._logger.logUnindent();
     }
 
     trigger(caller?: any) {

@@ -5,6 +5,7 @@ import ObservableValue from './observable/value';
 import ObservableProperty from './observable/property';
 import {ObservableScales, ObservableTimeScales} from './scales/scales-interface';
 import {scales, timeScales} from './scales/scales-wrapper';
+import Logger from './utils/logger';
 
 
 export interface D3Bind {
@@ -25,6 +26,8 @@ export interface D3Bind {
 
     scale: ObservableScales,
     time: { scale: ObservableTimeScales }
+
+    logging: boolean
 }
 
 const d3bind: D3Bind = <D3Bind>{};
@@ -35,5 +38,10 @@ d3bind.ObservableValue = ObservableValue;
 
 d3bind.scale = scales;
 d3bind.time = { scale: timeScales };
+
+Object.defineProperty(d3bind, 'logging', {
+    get: () => Logger.enabled,
+    set: (value) => Logger.enabled = value
+});
 
 export default d3bind;

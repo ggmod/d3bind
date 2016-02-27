@@ -6,7 +6,7 @@ import {unbindObjectField, setUnbindForObjectField} from './unbind';
 export function addObservableSetter(source: any, object: any, name: string) {
 
     var sourceFunc = source[name];
-    var observable = new ObservableProxy(() => sourceFunc(), value => sourceFunc(value));
+    var observable = new ObservableProxy(() => sourceFunc(), value => sourceFunc(value), name);
     var override = (value?: any) => {
         if (value !== undefined) {
             observable.set(value);

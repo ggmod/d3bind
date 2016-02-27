@@ -2,6 +2,7 @@ import {subscribe} from '../bindings/helpers';
 import Observable from "../observable/observable";
 import selector, {D3BindSelector} from "../selector";
 import {setUnbindForSelectorField, unbindSelectorField} from '../bindings/unbind';
+import Logger from '../utils/logger';
 
 
 const BIND_CALL_ID = 'd3bind_bindCall_id';
@@ -20,11 +21,14 @@ function setFuncId(func: any) {
 
 function bindCall(observable: Observable<any> | Observable<any>[], func: (selector: D3BindSelector) => void): D3BindSelector {
 
+    var logger = Logger.get('Selector', 'call');
+
     setFuncId(func);
 
     this.call(func);
 
-    var unsubscribeFunc = subscribe(observable, () => {
+    var unsubscribeFunc = subscribe(observable, (newValue, oldValue, caller) => {
+        logger.log(newValue, 'oldValue:', oldValue, 'caller:', caller);
         this.call(func);
     });
 

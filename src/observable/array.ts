@@ -1,5 +1,6 @@
 import ObservableArrayLength from './array-length';
 import ObservableArrayIndex from "./array-index";
+import Logger from '../utils/logger';
 
 
 export interface ObservableArrayHandler<T> {
@@ -13,6 +14,8 @@ export default class ObservableArray<T> {
     private _array: T[] = [];
     private _subscribers: ObservableArrayHandler<T>[] = [];
     private _observableLength: ObservableArrayLength;
+
+    private _logger = Logger.get((<any>this.constructor).name);
 
     get array() {
         return this._array;
@@ -48,18 +51,28 @@ export default class ObservableArray<T> {
     }
 
     private _triggerInsert(item: T, index: number) {
+        this._logger.logIndent('insert', item, 'index:', index);
+
         this._subscribers.forEach(subscriber => {
             subscriber.insert.call(null, item, index);
         });
+
+        this._logger.logUnindent();
     }
 
     private _triggerRemove(item: T, index: number) {
+        this._logger.logIndent('remove', item, 'index:', index);
+
         this._subscribers.forEach(subscriber => {
             subscriber.remove.call(null, item, index);
         });
+
+        this._logger.logUnindent();
     }
 
     private _triggerReplace(item: T, index: number, oldValue: T, caller?: any) {
+        this._logger.logIndent('replace', item, 'index:', index, 'oldValue:', oldValue, 'caller:', caller);
+
         this._subscribers.forEach(subscriber => {
             if (subscriber.replace != null) {
                 subscriber.replace.call(null, item, index, oldValue, caller);
@@ -68,6 +81,8 @@ export default class ObservableArray<T> {
                 subscriber.insert.call(null, item, index);
             }
         });
+
+        this._logger.logUnindent();
     }
 
     // bindings:

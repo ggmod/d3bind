@@ -4,14 +4,12 @@ import AbstractObservable from "./abstract";
 
 export default class ObservableProperty<T> extends AbstractObservable<T> implements WritableObservable<T> {
 
-    private _name: string;
     private _parent: any;
     private _value: T;
 
     constructor(parent: any, name: string) {
-        super();
+        super(name);
 
-        this._name = name;
         this._parent = parent;
 
         this._value = parent[name];

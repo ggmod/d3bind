@@ -6,7 +6,7 @@ import WritableObservable from "./observable";
 export default class ObservableArrayIndex<T> extends AbstractObservable<T> implements WritableObservable<T> {
 
     constructor(private _list: ObservableArray<T>, private _index: number) {
-        super();
+        super(_index.toString());
 
         _list.subscribe({
             insert: (value, index) => {
