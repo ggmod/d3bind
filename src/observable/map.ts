@@ -2,6 +2,7 @@ import ObservableMapSize from './map-size';
 import ObservableMapKey from './map-key';
 import ObservableArray from './array';
 import Logger from '../utils/logger';
+import Subscribable from "./subscribable";
 
 
 export interface ObservableMapHandler<K, V> {
@@ -10,12 +11,11 @@ export interface ObservableMapHandler<K, V> {
     replace?: (value: V, key: K, oldValue: V, caller?: any) => void
 }
 
-export default class ObservableMap<K, V> {
+export default class ObservableMap<K, V> extends Subscribable<ObservableMapHandler<K, V>> {
 
-    private _map: any = {}; // FIXME make it work with ES6 maps too (non-string keys)
+    private _map: any = Object.create(null);
     private _size = 0;
 
-    private _subscribers: ObservableMapHandler<K,V>[] = [];
     private _observableSize: ObservableMapSize;
 
     private _logger = Logger.get((<any>this.constructor).name);
@@ -29,28 +29,11 @@ export default class ObservableMap<K, V> {
     }
 
     constructor() {
+        super();
         this._observableSize = new ObservableMapSize(this);
     }
 
     // subscribing:
-
-    subscribe(handler: ObservableMapHandler<K,V>): () => boolean {
-        this._subscribers.push(handler);
-        return () => this.unsubscribe(handler);
-    }
-
-    unsubscribe(handler: ObservableMapHandler<K,V>): boolean {
-        var index = this._subscribers.indexOf(handler);
-        if (index >= 0) {
-            this._subscribers.splice(index, 1);
-            return true;
-        }
-        return false;
-    }
-
-    unsubscribeAll() {
-        this._subscribers = [];
-    }
 
     private _triggerInsert(item: V, key: K) {
         this._size++;
@@ -108,7 +91,7 @@ export default class ObservableMap<K, V> {
     }
 
     has(key: K): boolean {
-        return this._map[<any>key] === undefined;
+        return this._map[<any>key] !== undefined;
     }
 
     set(key: K, value: V, noTrigger = false, caller?: any) {

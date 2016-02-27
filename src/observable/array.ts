@@ -1,6 +1,7 @@
 import ObservableArrayLength from './array-length';
 import ObservableArrayIndex from "./array-index";
 import Logger from '../utils/logger';
+import Subscribable from "./subscribable";
 
 
 export interface ObservableArrayHandler<T> {
@@ -9,10 +10,9 @@ export interface ObservableArrayHandler<T> {
     replace?: (item: T, index: number, oldValue: T, caller?: any) => void
 }
 
-export default class ObservableArray<T> {
+export default class ObservableArray<T> extends Subscribable<ObservableArrayHandler<T>> {
 
     private _array: T[] = [];
-    private _subscribers: ObservableArrayHandler<T>[] = [];
     private _observableLength: ObservableArrayLength;
 
     private _logger = Logger.get((<any>this.constructor).name);
@@ -26,29 +26,13 @@ export default class ObservableArray<T> {
     }
 
     constructor(array?: T[]) {
+        super();
+
         this._array = array || [];
         this._observableLength = new ObservableArrayLength(this);
     }
 
     // subscribing:
-
-    subscribe(handler: ObservableArrayHandler<T>): () => boolean {
-        this._subscribers.push(handler);
-        return () => this.unsubscribe(handler);
-    }
-
-    unsubscribe(handler: ObservableArrayHandler<T>): boolean {
-        var index = this._subscribers.indexOf(handler);
-        if (index >= 0) {
-            this._subscribers.splice(index, 1);
-            return true;
-        }
-        return false;
-    }
-
-    unsubscribeAll() {
-        this._subscribers = [];
-    }
 
     private _triggerInsert(item: T, index: number) {
         this._logger.logIndent('insert', item, 'index:', index);
@@ -245,8 +229,6 @@ export default class ObservableArray<T> {
 
         return removedItems;
     }
-
-    // TODO ES6 iterators and functions
 
     // static constructors:
 

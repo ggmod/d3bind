@@ -1,8 +1,8 @@
 import ObservableMap from './map';
 import AbstractObservable from './abstract';
-import WritableObservable from "./observable";
+import {WritableObservable} from "./observable";
 
-// FIXME: I had to use loose equality because often one of the keys is a string and the other a number, this problem wouldn't exist with ES6 Maps
+// WARNING: I had to use loose equality because often one of the keys is a string and the other a number, this problem wouldn't exist with ES6 Maps
 
 export default class ObservableMapKey<K, V> extends AbstractObservable<V> implements WritableObservable<V> {
 

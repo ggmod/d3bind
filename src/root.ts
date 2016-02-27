@@ -6,6 +6,7 @@ import ObservableProperty from './observable/property';
 import {ObservableScales, ObservableTimeScales} from './scales/scales-interface';
 import {scales, timeScales} from './scales/scales-wrapper';
 import Logger from './utils/logger';
+import ObservableSet from "./observable/set";
 
 
 export interface D3Bind {
@@ -22,6 +23,7 @@ export interface D3Bind {
 
     ObservableArray: typeof ObservableArray,
     ObservableMap: typeof ObservableMap,
+    ObservableSet: typeof ObservableSet,
     ObservableValue: typeof ObservableValue
 
     scale: ObservableScales,
@@ -34,6 +36,7 @@ const d3bind: D3Bind = <D3Bind>{};
 
 d3bind.ObservableArray = ObservableArray;
 d3bind.ObservableMap = ObservableMap;
+d3bind.ObservableSet = ObservableSet;
 d3bind.ObservableValue = ObservableValue;
 
 d3bind.scale = scales;
