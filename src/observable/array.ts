@@ -174,8 +174,6 @@ export default class ObservableArray<T> extends Subscribable<ObservableArrayHand
         return this._array.toLocaleString();
     }
 
-    // TODO write the missing Array mutator methods (reverse, sort) :
-
     push(...items: T[]): number {
         for (var i = 0; i < items.length; i++) {
             this._array.push(items[i]);
@@ -206,8 +204,7 @@ export default class ObservableArray<T> extends Subscribable<ObservableArrayHand
         return this.length;
     }
 
-    splice(start: number, removeCount: number) {
-        // TODO copy the entire 500 lines long splice polifyll here...
+    splice(start: number, removeCount?: number, ...newItems: T[]): T[] {
 
         if (start > this.length) {
             start = this.length;
@@ -215,16 +212,22 @@ export default class ObservableArray<T> extends Subscribable<ObservableArrayHand
             if (-start > this.length) {
                 start = 0;
             } else {
-                start = this.length - start;
+                start = this.length + start;
             }
         }
+
         removeCount = removeCount !== undefined ? Math.min(removeCount, this.length - start): this.length - start;
 
         var removedItems: T[] = [];
         for (var i = 0; i < removeCount; i++) {
-            var removedItem = this._array.splice(start + i, 1)[0];
+            var removedItem = this._array.splice(start, 1)[0];
             removedItems.push(removedItem);
-            this._triggerRemove(removedItem, start + i);
+            this._triggerRemove(removedItem, start);
+        }
+
+        for (var i = 0; i < newItems.length; i++) {
+            this._array.splice(start + i, 0, newItems[i]);
+            this._triggerInsert(newItems[i], start + i);
         }
 
         return removedItems;
