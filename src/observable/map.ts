@@ -121,7 +121,7 @@ export default class ObservableMap<K, V> extends Subscribable<ObservableMapHandl
         for (var key in this._map) {
             var value = this._map[key];
             delete this._map[key];
-            this._triggerRemove(value, key);
+            this._triggerRemove(value, <any>key);
         }
     }
 

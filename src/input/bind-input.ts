@@ -1,7 +1,7 @@
 import {bind} from '../bindings/selector';
 import {WritableObservable} from "../observable/observable";
 import selector, {D3BindSelector} from "../selector";
-import {Primitive} from '../utils';
+import {Primitive} from '../utils/types';
 import {unbindSelectorField} from '../bindings/unbind';
 
 

@@ -5,7 +5,7 @@ import {subscribe, getSubscribedValue} from '../observable/helpers';
 import Logger from '../utils/logger';
 
 
-type BindingApplyFunc<T> = (input: T, caller?: any) => void;
+export type BindingApplyFunc<T> = (input: T, caller?: any) => void;
 
 export function bind<V, T>(selector: D3BindSelector, name: string, observable : Observable<T>, converter: (input: T) => V, applyFunc: BindingApplyFunc<V>): void;
 export function bind<V>(selector: D3BindSelector, name: string, observable: Observable<any>[], converter: (...params: any[]) => V, applyFunc: BindingApplyFunc<V>): void;
@@ -28,7 +28,7 @@ export interface BindingTransition {
     transition: (t: d3.Transition<any>) => d3.Transition<any> | boolean
 }
 
-type BindingWithTransitionApplyFunc<T> = (selector: d3.Selection<any> | d3.Transition<any>, value: T, caller?: any) => void;
+export type BindingWithTransitionApplyFunc<T> = (selector: d3.Selection<any> | d3.Transition<any>, value: T, caller?: any) => void;
 
 const TRANSITION_PREFIX = 'd3bind_';
 

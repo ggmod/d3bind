@@ -1,6 +1,6 @@
 import Observable, {WritableObservable} from "./observable/observable";
 import ObservableArray from "./observable/array";
-import {Primitive} from './utils';
+import {Primitive} from './utils/types';
 import {BindRepeatRenderer, BindRepeatOptions} from './repeat/bind-repeat';
 import {BindingTransition} from './bindings/selector';
 

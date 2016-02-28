@@ -36,21 +36,21 @@ export type BindRepeatRenderer<T> = (modelItem: T | WritableObservable<T>, index
 
 export default class BindRepeat<T> {
 
-    selectorProxy: D3BindSelector;
+    private selectorProxy: D3BindSelector;
 
-    repeatItems: BindRepeatItem<T>[] = [];
-    repeatItemsById: { [id: string]: BindRepeatItem<T>} = {};
+    private repeatItems: BindRepeatItem<T>[] = [];
+    private repeatItemsById: { [id: string]: BindRepeatItem<T>} = {};
 
     // state variables, the source of all evil
-    currentIndex: number;
-    currentEvent: BindRepeatEvent;
+    private currentIndex: number;
+    private currentEvent: BindRepeatEvent;
 
     indexSubscriberCount = 0;
     datumSubscriberCount = 0;
 
-    itemCounter = 0;
+    private itemCounter = 0;
 
-    logger: Logger;
+    private logger: Logger;
 
     constructor(
         public modelList: ObservableArray<T>,
@@ -73,7 +73,7 @@ export default class BindRepeat<T> {
         setUnbindForSelectorField(selector, 'repeat', () => unsubscribeFunc() ? 1 : 0);
     }
 
-    _createRepeatItem() {
+    private createRepeatItem() {
         var id = this.itemCounter++;
         var indexProxy = new BindRepeatIndexProxy(id, this);
         var datumProxy = this.options.customReplace ? new BindRepeatDatumProxy<T>(id, this) : null;
@@ -95,12 +95,12 @@ export default class BindRepeat<T> {
         return { indexProxy, datumProxy };
     }
 
-    build() {
+    private build() {
         this.currentEvent = BindRepeatEvent.BUILD;
 
         for (this.currentIndex = 0; this.currentIndex < this.modelList.length; this.currentIndex++) {
 
-            var { indexProxy, datumProxy } = this._createRepeatItem();
+            var { indexProxy, datumProxy } = this.createRepeatItem();
             var modelItem = this.modelList.get(this.currentIndex);
             var rendererItem = this.options.customReplace ? datumProxy : modelItem;
             this.renderer.call(this.selectorProxy, rendererItem, indexProxy, this.selectorProxy); // 'this' passed in twice, intentional redundancy
@@ -110,13 +110,13 @@ export default class BindRepeat<T> {
         this.currentIndex = null;
     }
 
-    onInsert(item: T, index: number) {
+    private onInsert(item: T, index: number) {
         this.logger.log('insert', item, 'index:', index);
 
         this.currentEvent = BindRepeatEvent.INSERT;
         this.currentIndex = index;
 
-        var { indexProxy, datumProxy } = this._createRepeatItem();
+        var { indexProxy, datumProxy } = this.createRepeatItem();
         var rendererItem = this.options.customReplace ? datumProxy : item;
         this.renderer.call(this.selectorProxy, rendererItem, indexProxy, this.selectorProxy);
 
@@ -128,7 +128,7 @@ export default class BindRepeat<T> {
         this.currentIndex = null;
     }
 
-    onRemove(item: T, index: number) {
+    private onRemove(item: T, index: number) {
         this.logger.log('remove', item, 'index:', index);
 
         this.currentEvent = BindRepeatEvent.REMOVE;
@@ -150,7 +150,7 @@ export default class BindRepeat<T> {
         this.currentIndex = null;
     }
 
-    onReplace(item: T, index: number, oldValue: T, caller: any) {
+    private onReplace(item: T, index: number, oldValue: T, caller: any) {
         this.logger.log('replace', item, 'index:', index, 'oldValue:', oldValue, 'caller:', caller);
 
         this.currentEvent = BindRepeatEvent.REPLACE;
@@ -163,7 +163,7 @@ export default class BindRepeat<T> {
         this.currentIndex = null;
     }
 
-    updateIndexes() {
+    private updateIndexes() {
         // I assume that in most use-cases there will be either no index subscribers, or every item will have some
         if (this.indexSubscriberCount > 0 || this.datumSubscriberCount > 0) {
             for (; this.currentIndex < this.repeatItems.length; this.currentIndex++) {
@@ -202,7 +202,7 @@ export default class BindRepeat<T> {
         return { newValue, oldValue };
     }
 
-    createSelectorProxy(): D3BindSelector {
+    private createSelectorProxy(): D3BindSelector {
         var proxy: D3BindSelector = Object.create(this.selector);
         proxy.append = (input: any): D3BindSelector => {
             return this.insertRepeatItem(input);
@@ -214,9 +214,9 @@ export default class BindRepeat<T> {
         return proxy;
     }
 
-    insertRepeatItem(input: string): D3BindSelector;
-    insertRepeatItem(input: () => EventTarget): D3BindSelector;
-    insertRepeatItem(input: any): D3BindSelector {
+    private insertRepeatItem(input: string): D3BindSelector;
+    private insertRepeatItem(input: () => EventTarget): D3BindSelector;
+    private insertRepeatItem(input: any): D3BindSelector {
         if (this.currentIndex == null) {
             // TODO this.getCurrentIndexOfSelectorProxy(); - but there would be N different selector proxies then
             throw "the bindRepeat render function must call the append/insert method synchronously!";

@@ -92,7 +92,7 @@ export default class ObservableSet<T> extends Subscribable<ObservableSetHandler<
     clear() {
         for (var key in this._map) {
             delete this._map[key];
-            this._triggerRemove(key);
+            this._triggerRemove(<any>key);
         }
     }
 

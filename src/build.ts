@@ -2,7 +2,7 @@
 import './core/selector-bindings';
 import './core/selector-bindcall';
 import './core/selector-override';
-import './core/selector-unbinds.ts';
+import './core/selector-unbinds';
 import './repeat/repeat';
 import './repeat/bind-repeat';
 import './input/bind-input';

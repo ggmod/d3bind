@@ -5,6 +5,12 @@
         "removeComments": true,
         "preserveConstEnums": true,
         "sourceMap": true,
-        "target": "ES5"
-    }
+        "target": "ES5",
+        "declaration": true,
+        "outDir": "build2/"
+    },
+    "files": [
+        "./typings/tsd.d.ts",
+        "./src/index.ts"
+    ]
 }

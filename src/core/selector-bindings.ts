@@ -1,7 +1,7 @@
 import {bind, bindWithTransition, BindingTransition} from '../bindings/selector';
 import Observable from "../observable/observable";
 import selector, {D3BindSelector} from "../selector";
-import {Primitive} from '../utils';
+import {Primitive} from '../utils/types';
 
 
 function bindText(observable: Observable<string>, transition?: BindingTransition): D3BindSelector;
