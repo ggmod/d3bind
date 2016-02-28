@@ -3,7 +3,7 @@ import ObservableArray from "../observable/array";
 import Observable, {ObservableHandler} from '../observable/observable'
 import BindRepeatIndexProxy from './bind-repeat-index';
 import BindRepeatDatumProxy from "./bind-repeat-datum";
-import WritableObservable from "../observable/observable";
+import {WritableObservable} from "../observable/observable";
 import {setUnbindForSelectorField, unbindSelectorField} from '../bindings/unbind';
 import Logger from '../utils/logger';
 

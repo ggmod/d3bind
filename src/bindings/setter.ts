@@ -1,4 +1,4 @@
-import {subscribe, getBoundValue} from './helpers';
+import {subscribe, getSubscribedValue} from '../observable/helpers';
 import ObservableProxy from '../observable/proxy';
 import {unbindObjectField, setUnbindForObjectField} from './unbind';
 
@@ -22,10 +22,10 @@ export function addObservableSetter(source: any, object: any, name: string) {
     var bindName = name.charAt(0).toUpperCase() + name.substr(1);
     object['bind' + bindName] = (observable: any, converter?: any) => {
 
-        override(getBoundValue<any>(observable, converter));
+        override(getSubscribedValue<any>(observable, converter));
 
         var unsubscribeFunc = subscribe(observable, () => {
-            override(getBoundValue<any>(observable, converter));
+            override(getSubscribedValue<any>(observable, converter));
         });
 
         setUnbindForObjectField(object, name, unsubscribeFunc);

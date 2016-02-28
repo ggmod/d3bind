@@ -1,6 +1,6 @@
 import ObservableArray from './array';
 import AbstractObservable from './abstract';
-import WritableObservable from "./observable";
+import {WritableObservable} from "./observable";
 
 
 export default class ObservableArrayIndex<T> extends AbstractObservable<T> implements WritableObservable<T> {

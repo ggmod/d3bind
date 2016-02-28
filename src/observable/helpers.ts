@@ -1,10 +1,10 @@
-import Observable from "../observable/observable";
-import {ObservableHandler} from "../observable/observable";
+import Observable from "./observable";
+import {ObservableHandler} from "./observable";
 
 
-export function getBoundValue<V, T>(observable : Observable<T>, converter?: (input: T) => V): V;
-export function getBoundValue<V>(observable: Observable<any>[], converter: (...params: any[]) => V): V;
-export function getBoundValue<V>(observable: any, converter: any): V {
+export function getSubscribedValue<V, T>(observable : Observable<T>, converter?: (input: T) => V): V;
+export function getSubscribedValue<V>(observable: Observable<any>[], converter: (...params: any[]) => V): V;
+export function getSubscribedValue<V>(observable: any, converter: any): V {
     if (converter != null && observable instanceof Array) {
         var inputs = observable.map((property: Observable<any>) => property.get());
         return converter.apply(null, inputs);

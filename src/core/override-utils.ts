@@ -1,5 +1,5 @@
-import selectorTemplate from './../selector';
-import {D3Selector, D3BindSelector} from "./../selector";
+import selectorTemplate from '../selector';
+import {D3Selector, D3BindSelector} from "../selector";
 
 
 export function addBindingFunctionsToSelector(d3selector: D3Selector): D3BindSelector {

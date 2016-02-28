@@ -1,12 +1,10 @@
 import {D3Selector, D3BindSelector} from "./selector";
 import ObservableArray from './observable/array';
 import ObservableMap from './observable/map';
-import ObservableValue from './observable/value';
-import ObservableProperty from './observable/property';
-import {ObservableScales, ObservableTimeScales} from './scales/scales-interface';
-import {scales, timeScales} from './scales/scales-wrapper';
-import Logger from './utils/logger';
 import ObservableSet from "./observable/set";
+import ObservableValue from './observable/value';
+import ObservableView from './observable/view';
+import {ObservableScales, ObservableTimeScales} from './scales/scales-interface';
 
 
 export interface D3Bind {
@@ -24,7 +22,8 @@ export interface D3Bind {
     ObservableArray: typeof ObservableArray,
     ObservableMap: typeof ObservableMap,
     ObservableSet: typeof ObservableSet,
-    ObservableValue: typeof ObservableValue
+    ObservableValue: typeof ObservableValue,
+    ObservableView: typeof ObservableView,
 
     scale: ObservableScales,
     time: { scale: ObservableTimeScales }
@@ -33,18 +32,4 @@ export interface D3Bind {
 }
 
 const d3bind: D3Bind = <D3Bind>{};
-
-d3bind.ObservableArray = ObservableArray;
-d3bind.ObservableMap = ObservableMap;
-d3bind.ObservableSet = ObservableSet;
-d3bind.ObservableValue = ObservableValue;
-
-d3bind.scale = scales;
-d3bind.time = { scale: timeScales };
-
-Object.defineProperty(d3bind, 'logging', {
-    get: () => Logger.enabled,
-    set: (value) => Logger.enabled = value
-});
-
 export default d3bind;

@@ -12,3 +12,4 @@ import './redraw/bind-redraw';
 import './core/root-override';
 import './root/observe';
 import './root/wrap';
+import './root/root';

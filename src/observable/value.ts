@@ -12,7 +12,6 @@ export default class ObservableValue<T> extends AbstractObservable<T> implements
         this._value = initialValue;
     }
 
-
     get(): T {
         return this._value;
     }

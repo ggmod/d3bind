@@ -1,7 +1,7 @@
 import Observable from "../observable/observable";
 import {D3BindSelector} from "../selector";
 import {setUnbindForSelectorField} from './unbind';
-import {subscribe, getBoundValue} from './helpers';
+import {subscribe, getSubscribedValue} from '../observable/helpers';
 import Logger from '../utils/logger';
 
 
@@ -12,10 +12,10 @@ export function bind<V>(selector: D3BindSelector, name: string, observable: Obse
 export function bind<V>(selector: D3BindSelector, name: string, observable: any, converter: any, applyFunc: BindingApplyFunc<V>): void {
     var logger = Logger.get('Selector', name);
 
-    applyFunc(getBoundValue<V>(observable, converter));
+    applyFunc(getSubscribedValue<V>(observable, converter));
 
     var unsubscribeFunc = subscribe(observable, (newValue, oldValue, caller) => {
-        var value = getBoundValue<V>(observable, converter);
+        var value = getSubscribedValue<V>(observable, converter);
         logger.log(value, 'caller:', caller);
         applyFunc(value, caller);
     });
@@ -38,7 +38,7 @@ export function bindWithTransition<V>(selector: D3BindSelector, name: string, ob
     var logger = Logger.get('Selector', name);
     var transitionName = TRANSITION_PREFIX + name;
 
-    applyFunc(selector, getBoundValue<V>(observable, converter));
+    applyFunc(selector, getSubscribedValue<V>(observable, converter));
 
     var unsubscribeFunc = subscribe(observable, (newValue, oldValue, caller) => {
         var _selector: d3.Selection<any> | d3.Transition<any> = null;
@@ -49,7 +49,7 @@ export function bindWithTransition<V>(selector: D3BindSelector, name: string, ob
             _selector = selector;
         }
 
-        var value = getBoundValue<V>(observable, converter);
+        var value = getSubscribedValue<V>(observable, converter);
         logger.log(value, 'caller:', caller);
         applyFunc(_selector, value, caller);
     });

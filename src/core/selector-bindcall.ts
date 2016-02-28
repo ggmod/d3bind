@@ -1,4 +1,4 @@
-import {subscribe} from '../bindings/helpers';
+import {subscribe} from '../observable/helpers';
 import Observable from "../observable/observable";
 import selector, {D3BindSelector} from "../selector";
 import {setUnbindForSelectorField, unbindSelectorField} from '../bindings/unbind';
