@@ -6,12 +6,12 @@
     "d3",
     "observable"
   ],
-  "main": "build2/index.js",
-  "typings": "build2/index",
+  "main": "dist/index.js",
+  "typings": "dist/index",
   "author": "ggmod",
   "license": "ISC",
   "scripts": {
-    "prebublish": "gulp build",
+    "prepublish": "gulp build && tsc",
     "test": "mocha --harmony-destructuring test/**/*.js"
   },
   "devDependencies": {

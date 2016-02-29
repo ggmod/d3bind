@@ -1,6 +1,6 @@
 node_modules
 build
-build2
+dist
 
 # not the bundle itself
 /typings/*/*.d.ts

@@ -7,7 +7,7 @@
         "sourceMap": true,
         "target": "ES5",
         "declaration": true,
-        "outDir": "build2/"
+        "outDir": "dist/"
     },
     "files": [
         "./typings/tsd.d.ts",
