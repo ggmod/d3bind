@@ -12,7 +12,7 @@ function redraw(selector: D3BindSelector, observable: any, renderer: () => void)
     selector.selectAll("*").remove();
 
     if (observable instanceof Array) {
-        renderer.apply(selector, observable.map((observableItem: Observable<any>) => observableItem.get()).concat(selector));
+        renderer.apply(selector, observable.map((item: Observable<any>) => item.get()).concat(selector));
     } else {
         renderer.call(selector, observable.get(), selector);
     }
@@ -24,8 +24,8 @@ function bindRedraw(observable: any, renderer: () => void): D3BindSelector {
     var logger = Logger.get('Selector', 'redraw');
     redraw(this, observable, renderer);
 
-    var unsubscribeFunc = subscribe(observable, (newValue, oldValue, caller) => {
-        logger.log(newValue, 'oldValue:', oldValue, 'caller:', caller);
+    var unsubscribeFunc = subscribe(observable, () => null, (newValue, oldValue, caller) => {
+        logger.log('caller:', caller);
         redraw(this, observable, renderer);
     });
 

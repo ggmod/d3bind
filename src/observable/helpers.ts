@@ -26,7 +26,7 @@ function unsubscribeEvery(func: Unsubscribe | Unsubscribe[]): number {
     }
 }
 
-export function subscribe(observable: Observable<any> | Observable<any>[], handler: ObservableHandler<any>): () => number {
+export function subscribeEvery(observable: Observable<any> | Observable<any>[], handler: ObservableHandler<any>): () => number {
     var unbind: Unsubscribe | Unsubscribe[] = null;
 
     if (observable instanceof Array) {
@@ -36,4 +36,17 @@ export function subscribe(observable: Observable<any> | Observable<any>[], handl
     }
 
     return () => unsubscribeEvery(unbind);
+}
+
+export function subscribe<V, T>(observable : Observable<T>, converter: (input: T) => V, handler: ObservableHandler<V>): () => number;
+export function subscribe<V>(observable: Observable<any>[], converter: (...params: any[]) => V, handler: ObservableHandler<V>): () => number;
+export function subscribe<V>(observable: any, converter: any, handler: ObservableHandler<V>): () => number {
+
+    var previousValue: V = null;
+
+    return subscribeEvery(observable, (newValue, oldValue, caller) => {
+        var newConvertedValue = getSubscribedValue<V>(observable, converter);
+        handler.call(null, newConvertedValue, previousValue, caller);
+        previousValue = newConvertedValue;
+    });
 }

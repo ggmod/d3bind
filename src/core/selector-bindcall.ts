@@ -18,8 +18,9 @@ function setFuncId(func: any) {
     }
 }
 
-
-function bindCall(observable: Observable<any> | Observable<any>[], func: (selector: D3BindSelector) => void): D3BindSelector {
+function bindCall(observable: Observable<any>, func: (selector: D3BindSelector) => void): D3BindSelector;
+function bindCall(observable: Observable<any>[], func: (selector: D3BindSelector) => void): D3BindSelector;
+function bindCall(observable: any, func: (selector: D3BindSelector) => void): D3BindSelector {
 
     var logger = Logger.get('Selector', 'call');
 
@@ -27,8 +28,8 @@ function bindCall(observable: Observable<any> | Observable<any>[], func: (select
 
     this.call(func);
 
-    var unsubscribeFunc = subscribe(observable, (newValue, oldValue, caller) => {
-        logger.log(newValue, 'oldValue:', oldValue, 'caller:', caller);
+    var unsubscribeFunc = subscribe(observable, () => null, (newValue, oldValue, caller) => {
+        logger.log('caller:', caller);
         this.call(func);
     });
 

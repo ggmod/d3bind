@@ -24,8 +24,8 @@ export function addObservableSetter(source: any, object: any, name: string) {
 
         override(getSubscribedValue<any>(observable, converter));
 
-        var unsubscribeFunc = subscribe(observable, () => {
-            override(getSubscribedValue<any>(observable, converter));
+        var unsubscribeFunc = subscribe(observable, converter, (value) => {
+            override(value);
         });
 
         setUnbindForObjectField(object, name, unsubscribeFunc);

@@ -14,10 +14,9 @@ export function bind<V>(selector: D3BindSelector, name: string, observable: any,
 
     applyFunc(getSubscribedValue<V>(observable, converter));
 
-    var unsubscribeFunc = subscribe(observable, (newValue, oldValue, caller) => {
-        var value = getSubscribedValue<V>(observable, converter);
-        logger.log(value, 'caller:', caller);
-        applyFunc(value, caller);
+    var unsubscribeFunc = subscribe<V>(observable, converter, (newValue, oldValue, caller) => {
+        logger.log(newValue, 'oldValue:', oldValue, 'caller:', caller);
+        applyFunc(newValue, caller);
     });
 
     setUnbindForSelectorField(selector, name, unsubscribeFunc);
@@ -32,6 +31,17 @@ export type BindingWithTransitionApplyFunc<T> = (selector: d3.Selection<any> | d
 
 const TRANSITION_PREFIX = 'd3bind_';
 
+function getTransitionSelector(selector: D3BindSelector, transition: BindingTransition, transitionName: string) {
+    var _selector: d3.Selection<any> | d3.Transition<any> = null;
+    if (transition && transition.transition) {
+        _selector = typeof transition.transition === 'function' ?
+            <any>transition.transition(selector.transition(transitionName)) : selector.transition(transitionName);
+    } else {
+        _selector = selector;
+    }
+    return _selector;
+}
+
 export function bindWithTransition<V, T>(selector: D3BindSelector, name: string, observable : Observable<T>, converter: (input: T) => V, transition: BindingTransition, applyFunc: BindingWithTransitionApplyFunc<V>): void;
 export function bindWithTransition<V>(selector: D3BindSelector, name: string, observable: Observable<any>[], converter: (...params: any[]) => V, transition: BindingTransition, applyFunc: BindingWithTransitionApplyFunc<V>): void;
 export function bindWithTransition<V>(selector: D3BindSelector, name: string, observable: any, converter: any, transition: BindingTransition, applyFunc: BindingWithTransitionApplyFunc<V>): void {
@@ -40,18 +50,11 @@ export function bindWithTransition<V>(selector: D3BindSelector, name: string, ob
 
     applyFunc(selector, getSubscribedValue<V>(observable, converter));
 
-    var unsubscribeFunc = subscribe(observable, (newValue, oldValue, caller) => {
-        var _selector: d3.Selection<any> | d3.Transition<any> = null;
-        if (transition && transition.transition) {
-            _selector = typeof transition.transition === 'function' ?
-                <any>transition.transition(selector.transition(transitionName)) : selector.transition(transitionName);
-        } else {
-            _selector = selector;
-        }
+    var unsubscribeFunc = subscribe<V>(observable, converter, (newValue, oldValue, caller) => {
+        var _selector = getTransitionSelector(selector, transition, transitionName);
 
-        var value = getSubscribedValue<V>(observable, converter);
-        logger.log(value, 'caller:', caller);
-        applyFunc(_selector, value, caller);
+        logger.log(newValue, 'oldValue:', oldValue, 'caller:', caller);
+        applyFunc(_selector, newValue, caller);
     });
 
     setUnbindForSelectorField(selector, name, unsubscribeFunc);

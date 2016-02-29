@@ -53,7 +53,8 @@ export interface D3BindSelector extends D3Selector {
     bindProperty(property: string, observable: Observable<any>[], converter: (...params: any[]) => Primitive): D3BindSelector;
     unbindProperty(property: string): D3BindSelector;
 
-    bindCall(observable: Observable<any> | Observable<any>[], func: (selector: D3BindSelector) => void): D3BindSelector;
+    bindCall(observable: Observable<any>, func: (selector: D3BindSelector) => void): D3BindSelector;
+    bindCall(observable: Observable<any>[], func: (selector: D3BindSelector) => void): D3BindSelector;
     unbindCall(func: (selector: D3BindSelector) => void): D3BindSelector;
 
     bindInput(observable: WritableObservable<Primitive>): D3BindSelector

@@ -5,15 +5,11 @@ import {subscribe, getSubscribedValue} from './helpers';
 
 export default class ObservableView<T> extends AbstractObservable<T> {
 
-    private _previousValue: T;
-
     /*private*/ constructor(private observable: any, private converter: any) {
         super();
 
-        subscribe(observable, (newValue, oldValue, caller) => {
-            var newConvertedValue = getSubscribedValue<T>(observable, converter);
-            this._trigger(newConvertedValue, this._previousValue, caller);
-            this._previousValue = newConvertedValue;
+        subscribe<T>(observable, converter, (newValue, oldValue, caller) => {
+            this._trigger(newValue, oldValue, caller);
         });
     }
 
