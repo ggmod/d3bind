@@ -1,8 +1,8 @@
-import {D3Selector} from "../selector";
+import {D3Selection} from "../selection";
 import d3bind from '../root';
-import {addBindingFunctionsToSelector} from '../core/override-utils';
+import {addBindingFunctionsToSelection} from '../core/override-utils';
 
 
-d3bind.wrap = function(d3Selector: D3Selector) {
-    return addBindingFunctionsToSelector(d3Selector);
+d3bind.wrap = function(d3Selection: D3Selection) {
+    return addBindingFunctionsToSelection(d3Selection);
 };

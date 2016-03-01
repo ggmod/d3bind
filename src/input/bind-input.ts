@@ -1,13 +1,13 @@
-import {bind} from '../bindings/selector';
+import {bind} from '../bindings/selection';
 import {WritableObservable} from "../observable/observable";
-import selector, {D3BindSelector} from "../selector";
+import selection, {D3BindSelection} from "../selection";
 import {Primitive} from '../utils/types';
-import {unbindSelectorField} from '../bindings/unbind';
+import {unbindSelectionField} from '../bindings/unbind';
 
 
 const EVENT_NAMESPACE = '.d3bind_input';
 
-function bindInput(observable: WritableObservable<Primitive>): D3BindSelector {
+function bindInput(observable: WritableObservable<Primitive>): D3BindSelection {
 
     var self = this;
     var propertyName = this.property('type') === 'checkbox' ? 'checked' : 'value';
@@ -25,11 +25,11 @@ function bindInput(observable: WritableObservable<Primitive>): D3BindSelector {
 
     return this;
 }
-selector.bindInput = bindInput;
+selection.bindInput = bindInput;
 
 
-selector.unbindInput = function(): D3BindSelector {
-    unbindSelectorField(this, 'input');
+selection.unbindInput = function(): D3BindSelection {
+    unbindSelectionField(this, 'input');
 
     var eventName = this.property('type') === 'checkbox' ? 'change' : 'input';
     this.on(eventName + EVENT_NAMESPACE, null);

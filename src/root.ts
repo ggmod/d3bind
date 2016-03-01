@@ -1,4 +1,4 @@
-import {D3Selector, D3BindSelector} from "./selector";
+import {D3Selection, D3BindSelection} from "./selection";
 import ObservableArray from './observable/array';
 import ObservableMap from './observable/map';
 import ObservableSet from "./observable/set";
@@ -8,13 +8,13 @@ import {ObservableScales, ObservableTimeScales} from './scales/scales-interface'
 
 
 export interface D3Bind {
-    select(selectorText: string): D3BindSelector,
-    select(node: EventTarget): D3BindSelector,
-    selectAll(selectorText: string): D3BindSelector,
-    selectAll(nodes: EventTarget[]): D3BindSelector,
-    selection(): D3BindSelector,
+    select(selectorText: string): D3BindSelection,
+    select(node: EventTarget): D3BindSelection,
+    selectAll(selectorText: string): D3BindSelection,
+    selectAll(nodes: EventTarget[]): D3BindSelection,
+    selection(): D3BindSelection,
 
-    wrap(selector: D3Selector): D3BindSelector,
+    wrap(selection: D3Selection): D3BindSelection,
 
     observe(object: any): any,
     deepObserve(object: any): any,

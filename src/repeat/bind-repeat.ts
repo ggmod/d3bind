@@ -1,10 +1,10 @@
-import selector, {D3Selector, D3BindSelector} from "../selector";
+import selection, {D3Selection, D3BindSelection} from "../selection";
 import ObservableArray from "../observable/array";
 import Observable, {ObservableHandler} from '../observable/observable'
 import BindRepeatIndexProxy from './bind-repeat-index';
 import BindRepeatDatumProxy from "./bind-repeat-datum";
 import {WritableObservable} from "../observable/observable";
-import {setUnbindForSelectorField, unbindSelectorField} from '../bindings/unbind';
+import {setUnbindForSelectionField, unbindSelectionField} from '../bindings/unbind';
 import Logger from '../utils/logger';
 
 
@@ -22,7 +22,7 @@ enum BindRepeatEvent {
 interface BindRepeatItem<T> {
     id: number,
     index: number,
-    selector: D3BindSelector,
+    selection: D3BindSelection,
     indexProxy: BindRepeatIndexProxy,
     datumProxy: BindRepeatDatumProxy<T>
 }
@@ -31,12 +31,12 @@ export interface BindRepeatOptions {
     customReplace: boolean
 }
 
-export type BindRepeatRenderer<T> = (modelItem: T | WritableObservable<T>, index: Observable<number>, parent: D3BindSelector) => void;
+export type BindRepeatRenderer<T> = (modelItem: T | WritableObservable<T>, index: Observable<number>, parent: D3BindSelection) => void;
 
 
 export default class BindRepeat<T> {
 
-    private selectorProxy: D3BindSelector;
+    private selectionProxy: D3BindSelection;
 
     private repeatItems: BindRepeatItem<T>[] = [];
     private repeatItemsById: { [id: string]: BindRepeatItem<T>} = {};
@@ -56,11 +56,11 @@ export default class BindRepeat<T> {
         public modelList: ObservableArray<T>,
         private renderer: BindRepeatRenderer<T>,
         private options: BindRepeatOptions = <BindRepeatOptions>{},
-        private selector: D3BindSelector
+        private selection: D3BindSelection
     ) {
-        this.logger = Logger.get('Selector', 'repeat');
+        this.logger = Logger.get('Selection', 'repeat');
 
-        this.selectorProxy = this.createSelectorProxy();
+        this.selectionProxy = this.createSelectionProxy();
 
         this.build();
 
@@ -70,7 +70,7 @@ export default class BindRepeat<T> {
             replace: options.customReplace ? (item, index, oldValue, caller) => { this.onReplace(item, index, oldValue, caller); } : undefined
         });
 
-        setUnbindForSelectorField(selector, 'repeat', () => unsubscribeFunc() ? 1 : 0);
+        setUnbindForSelectionField(selection, 'repeat', () => unsubscribeFunc() ? 1 : 0);
     }
 
     private createRepeatItem() {
@@ -80,7 +80,7 @@ export default class BindRepeat<T> {
 
         var repeatItem = <BindRepeatItem<T>>{
             id: id,
-            selector: null,
+            selection: null,
             indexProxy: indexProxy,
             datumProxy: datumProxy,
             index: this.currentIndex
@@ -103,7 +103,7 @@ export default class BindRepeat<T> {
             var { indexProxy, datumProxy } = this.createRepeatItem();
             var modelItem = this.modelList.get(this.currentIndex);
             var rendererItem = this.options.customReplace ? datumProxy : modelItem;
-            this.renderer.call(this.selectorProxy, rendererItem, indexProxy, this.selectorProxy); // 'this' passed in twice, intentional redundancy
+            this.renderer.call(this.selectionProxy, rendererItem, indexProxy, this.selectionProxy); // 'this' passed in twice, intentional redundancy
         }
 
         this.currentEvent = null;
@@ -118,7 +118,7 @@ export default class BindRepeat<T> {
 
         var { indexProxy, datumProxy } = this.createRepeatItem();
         var rendererItem = this.options.customReplace ? datumProxy : item;
-        this.renderer.call(this.selectorProxy, rendererItem, indexProxy, this.selectorProxy);
+        this.renderer.call(this.selectionProxy, rendererItem, indexProxy, this.selectionProxy);
 
         this.currentEvent = BindRepeatEvent.INSERT_REINDEXING;
         this.currentIndex++;
@@ -137,7 +137,7 @@ export default class BindRepeat<T> {
         var itemToRemove = this.repeatItems.splice(index, 1)[0];
         delete this.repeatItemsById[itemToRemove.id];
 
-        itemToRemove.selector.remove();
+        itemToRemove.selection.remove();
         itemToRemove.indexProxy.unsubscribeAll();
         if (itemToRemove.datumProxy) {
             itemToRemove.datumProxy.unsubscribeAll();
@@ -202,51 +202,51 @@ export default class BindRepeat<T> {
         return { newValue, oldValue };
     }
 
-    private createSelectorProxy(): D3BindSelector {
-        var proxy: D3BindSelector = Object.create(this.selector);
-        proxy.append = (input: any): D3BindSelector => {
+    private createSelectionProxy(): D3BindSelection {
+        var proxy: D3BindSelection = Object.create(this.selection);
+        proxy.append = (input: any): D3BindSelection => {
             return this.insertRepeatItem(input);
         };
-        proxy.insert = (input: any, before: any): D3BindSelector => {
+        proxy.insert = (input: any, before: any): D3BindSelection => {
             if (before !== undefined) throw "before parameter of .insert() not supported inside bindRepeat";
             return this.insertRepeatItem(input);
         };
         return proxy;
     }
 
-    private insertRepeatItem(input: string): D3BindSelector;
-    private insertRepeatItem(input: () => EventTarget): D3BindSelector;
-    private insertRepeatItem(input: any): D3BindSelector {
+    private insertRepeatItem(input: string): D3BindSelection;
+    private insertRepeatItem(input: () => EventTarget): D3BindSelection;
+    private insertRepeatItem(input: any): D3BindSelection {
         if (this.currentIndex == null) {
-            // TODO this.getCurrentIndexOfSelectorProxy(); - but there would be N different selector proxies then
+            // TODO this.getCurrentIndexOfSelectionProxy(); - but there would be N different selection proxies then
             throw "the bindRepeat render function must call the append/insert method synchronously!";
         }
         var i = this.currentIndex;
 
-        var newItem: D3BindSelector = null;
+        var newItem: D3BindSelection = null;
         if (i >= this.repeatItems.length) {
-            newItem = this.selector.append(input);
+            newItem = this.selection.append(input);
         } else {
             /* I wanted to use something like '> :nth-child($i+1)', but querySelector and thus d3 .insert() doesn't support
              selectors for direct children only, except with polyfills:
              http://stackoverflow.com/questions/6481612/queryselector-search-immediate-children */
-            newItem = this.selector.insert(input, () => this.selector.node().childNodes[i]);
+            newItem = this.selection.insert(input, () => this.selection.node().childNodes[i]);
         }
 
-        this.repeatItems[i].selector = newItem;
+        this.repeatItems[i].selection = newItem;
         return newItem;
     }
 }
 
-function bindRepeat<T>(modelList: ObservableArray<T>, renderer: BindRepeatRenderer<T>, options?: BindRepeatOptions): D3BindSelector {
+function bindRepeat<T>(modelList: ObservableArray<T>, renderer: BindRepeatRenderer<T>, options?: BindRepeatOptions): D3BindSelection {
     this.node()[REPEAT_PREFIX] = new BindRepeat<T>(modelList, renderer, options, this);
     return this;
 }
-selector.bindRepeat = bindRepeat;
+selection.bindRepeat = bindRepeat;
 
 
-selector.unbindRepeat = function(): D3BindSelector {
-    unbindSelectorField(this, 'repeat');
+selection.unbindRepeat = function(): D3BindSelection {
+    unbindSelectionField(this, 'repeat');
 
     var repeatItems: BindRepeatItem<any>[] = this.node()[REPEAT_PREFIX].repeatItems;
 

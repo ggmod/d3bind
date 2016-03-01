@@ -1,27 +1,27 @@
 import {subscribe} from '../observable/helpers';
-import selector, {D3BindSelector} from "../selector";
+import selection, {D3BindSelection} from "../selection";
 import Observable from '../observable/observable';
-import {setUnbindForSelectorField, unbindSelectorField} from '../bindings/unbind';
+import {setUnbindForSelectionField, unbindSelectionField} from '../bindings/unbind';
 import Logger from '../utils/logger';
 
 
-function redraw<T>(selector: D3BindSelector, observable: Observable<T>, renderer: (model: T, parent: D3BindSelector) => void): void;
-function redraw(selector: D3BindSelector, observable: Observable<any>[], renderer: (...params: any[]) => void): void;
-function redraw(selector: D3BindSelector, observable: any, renderer: () => void): void {
+function redraw<T>(selection: D3BindSelection, observable: Observable<T>, renderer: (model: T, parent: D3BindSelection) => void): void;
+function redraw(selection: D3BindSelection, observable: Observable<any>[], renderer: (...params: any[]) => void): void;
+function redraw(selection: D3BindSelection, observable: any, renderer: () => void): void {
 
-    selector.selectAll("*").remove();
+    selection.selectAll("*").remove();
 
     if (observable instanceof Array) {
-        renderer.apply(selector, observable.map((item: Observable<any>) => item.get()).concat(selector));
+        renderer.apply(selection, observable.map((item: Observable<any>) => item.get()).concat(selection));
     } else {
-        renderer.call(selector, observable.get(), selector);
+        renderer.call(selection, observable.get(), selection);
     }
 }
 
-function bindRedraw<T>(observable: Observable<T>, renderer: (model: T, parent: D3BindSelector) => void): D3BindSelector;
-function bindRedraw(observable: Observable<any>[], renderer: (...params: any[]) => void): D3BindSelector;
-function bindRedraw(observable: any, renderer: () => void): D3BindSelector {
-    var logger = Logger.get('Selector', 'redraw');
+function bindRedraw<T>(observable: Observable<T>, renderer: (model: T, parent: D3BindSelection) => void): D3BindSelection;
+function bindRedraw(observable: Observable<any>[], renderer: (...params: any[]) => void): D3BindSelection;
+function bindRedraw(observable: any, renderer: () => void): D3BindSelection {
+    var logger = Logger.get('Selection', 'redraw');
     redraw(this, observable, renderer);
 
     var unsubscribeFunc = subscribe(observable, () => null, (newValue, oldValue, caller) => {
@@ -29,14 +29,14 @@ function bindRedraw(observable: any, renderer: () => void): D3BindSelector {
         redraw(this, observable, renderer);
     });
 
-    setUnbindForSelectorField(this, 'redraw', unsubscribeFunc);
+    setUnbindForSelectionField(this, 'redraw', unsubscribeFunc);
 
     return this;
 }
-selector.bindRedraw = bindRedraw;
+selection.bindRedraw = bindRedraw;
 
 
-selector.unbindRedraw = function(): D3BindSelector {
-    unbindSelectorField(this, 'redraw');
+selection.unbindRedraw = function(): D3BindSelection {
+    unbindSelectionField(this, 'redraw');
     return this;
 };

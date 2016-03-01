@@ -1,17 +1,17 @@
-import selectorTemplate from '../selector';
-import {D3Selector, D3BindSelector} from "../selector";
+import selectionTemplate from '../selection';
+import {D3Selection, D3BindSelection} from "../selection";
 
 
-export function addBindingFunctionsToSelector(d3selector: D3Selector): D3BindSelector {
-    var d3bindSelector: D3BindSelector = Object.create(d3selector);
-    for (let key in selectorTemplate) {
-        d3bindSelector[key] = selectorTemplate[key];
+export function addBindingFunctionsToSelection(d3selection: D3Selection): D3BindSelection {
+    var d3bindSelection: D3BindSelection = Object.create(d3selection);
+    for (let key in selectionTemplate) {
+        d3bindSelection[key] = selectionTemplate[key];
     }
-    return d3bindSelector;
+    return d3bindSelection;
 }
 
-export function override(selector: D3BindSelector, func: (_super: D3Selector) => D3Selector) {
-    var _super: D3Selector = Object.getPrototypeOf(selector);
-    var newSelector: D3Selector = func(_super);
-    return addBindingFunctionsToSelector(newSelector);
+export function override(selection: D3BindSelection, func: (_super: D3Selection) => D3Selection) {
+    var _super: D3Selection = Object.getPrototypeOf(selection);
+    var newSelection: D3Selection = func(_super);
+    return addBindingFunctionsToSelection(newSelection);
 }

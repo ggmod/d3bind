@@ -1,8 +1,8 @@
-// build the selector
-import './core/selector-bindings';
-import './core/selector-bindcall';
-import './core/selector-override';
-import './core/selector-unbinds';
+// build the selection template
+import './core/selection-bindings';
+import './core/selection-bindcall';
+import './core/selection-override';
+import './core/selection-unbinds';
 import './repeat/repeat';
 import './repeat/bind-repeat';
 import './input/bind-input';

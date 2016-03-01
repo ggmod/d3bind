@@ -1,19 +1,19 @@
-import {D3BindSelector} from '../selector';
+import {D3BindSelection} from '../selection';
 
 
 const UNSUBSCRIBE_PREFIX = '__d3bind_unsubscribe';
 
-export function setUnbindForSelectorField(selector: D3BindSelector, name: string, unsubscribeFunc: () => number) {
-    unbindSelectorField(selector, name);
+export function setUnbindForSelectionField(selection: D3BindSelection, name: string, unsubscribeFunc: () => number) {
+    unbindSelectionField(selection, name);
 
-    selector.each(function() {
+    selection.each(function() {
         bindObjectField(this, name, unsubscribeFunc);
     });
 }
 
-export function unbindSelectorField(selector: D3BindSelector, name: string) {
+export function unbindSelectionField(selection: D3BindSelection, name: string) {
     var unsubscribedCount = 0;
-    selector.each(function() {
+    selection.each(function() {
         unsubscribedCount += unbindObjectField(this, name);
     });
     return unsubscribedCount;
@@ -42,9 +42,9 @@ function bindObjectField(object: any, name: string, unsubscribeFunc: () => numbe
 
 // unbind all:
 
-export function unbindSelector(selector: D3BindSelector, descendants = false) {
+export function unbindSelection(selection: D3BindSelection, descendants = false) {
     var unsubscribedCount = 0;
-    selector.each(function() {
+    selection.each(function() {
         unsubscribedCount += descendants ? unbindElementTree(this) : unbindElement(this);
     });
     return unsubscribedCount;

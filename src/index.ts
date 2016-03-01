@@ -10,10 +10,10 @@ export default d3bind;
 
 
 export * from './root';
-export * from './selector';
+export * from './selection';
 export * from './utils/types';
 
-export {BindingTransition} from './bindings/selector';
+export {BindingTransition} from './bindings/selection';
 export {BindRepeatOptions, BindRepeatRenderer} from './repeat/bind-repeat';
 
 export * from './observable/observable';
