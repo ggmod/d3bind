@@ -1,5 +1,5 @@
 import Observable from "../observable/observable";
-import {D3BindSelection} from "../selection";
+import {D3BindSelection, D3Selection, D3Transition} from "../selection";
 import {setUnbindForSelectionField} from './unbind';
 import {subscribe, getSubscribedValue} from '../observable/helpers';
 import Logger from '../utils/logger';
@@ -24,18 +24,25 @@ export function bind<V>(selection: D3BindSelection, name: string, observable: an
 
 
 export interface BindingTransition {
-    transition: (t: d3.Transition<any>) => d3.Transition<any> | boolean
+    transition: boolean | ((t: D3Transition) => D3Transition)
 }
 
-export type BindingWithTransitionApplyFunc<T> = (selection: d3.Selection<any> | d3.Transition<any>, value: T, caller?: any) => void;
+export type BindingWithTransitionApplyFunc<T> = (selection: D3Selection | D3Transition, value: T, caller?: any) => void;
 
 const TRANSITION_PREFIX = 'd3bind_';
 
-function getTransitionSelection(selection: D3BindSelection, transition: BindingTransition, transitionName: string) {
-    var _selection: d3.Selection<any> | d3.Transition<any> = null;
+export function getTransitionSelection(selection: D3BindSelection, transition: BindingTransition, name: string): D3Selection | D3Transition {
+    var transitionName = TRANSITION_PREFIX + name;
+
+    var _selection: D3Selection | D3Transition = null;
     if (transition && transition.transition) {
-        _selection = typeof transition.transition === 'function' ?
-            <any>transition.transition(selection.transition(transitionName)) : selection.transition(transitionName);
+        var _transition: D3Transition = selection.transition(transitionName);
+        if (typeof transition.transition === 'function') {
+            var transitionConverter = (<(t: D3Transition) => D3Transition>transition.transition);
+            _selection = transitionConverter(_transition);
+        } else {
+            _selection = _transition;
+        }
     } else {
         _selection = selection;
     }
@@ -46,12 +53,11 @@ export function bindWithTransition<V, T>(selection: D3BindSelection, name: strin
 export function bindWithTransition<V>(selection: D3BindSelection, name: string, observable: Observable<any>[], converter: (...params: any[]) => V, transition: BindingTransition, applyFunc: BindingWithTransitionApplyFunc<V>): void;
 export function bindWithTransition<V>(selection: D3BindSelection, name: string, observable: any, converter: any, transition: BindingTransition, applyFunc: BindingWithTransitionApplyFunc<V>): void {
     var logger = Logger.get('Selection', name);
-    var transitionName = TRANSITION_PREFIX + name;
 
     applyFunc(selection, getSubscribedValue<V>(observable, converter));
 
     var unsubscribeFunc = subscribe<V>(observable, converter, (newValue, oldValue, caller) => {
-        var _selection = getTransitionSelection(selection, transition, transitionName);
+        var _selection = getTransitionSelection(selection, transition, name);
 
         logger.log(newValue, 'oldValue:', oldValue, 'caller:', caller);
         applyFunc(_selection, newValue, caller);

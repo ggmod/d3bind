@@ -1,6 +1,6 @@
 import {bind, bindWithTransition, BindingTransition} from '../bindings/selection';
 import Observable from "../observable/observable";
-import selection, {D3BindSelection} from "../selection";
+import selection, {D3BindSelection, D3Selection, D3Transition} from "../selection";
 import {Primitive} from '../utils/types';
 
 
@@ -11,7 +11,7 @@ function bindText(observable: any, converterOrTransition?: any, transition?: Bin
     var converter = typeof converterOrTransition === 'function' ? converterOrTransition : null;
     var transition: BindingTransition = typeof converterOrTransition === 'function' ? transition : converterOrTransition;
 
-    bindWithTransition(this, 'text', observable, converter, transition, (selection: d3.Selection<any> | d3.Transition<any>, value: string) => {
+    bindWithTransition(this, 'text', observable, converter, transition, (selection: D3Selection | D3Transition, value: string) => {
         selection.text(value);
     });
     return this;
@@ -47,7 +47,7 @@ function bindStyle(styleName: string, observable: any, converterOrTransition?: a
     var converter = typeof converterOrTransition === 'function' ? converterOrTransition : null;
     var transition: BindingTransition = typeof converterOrTransition === 'function' ? transition : converterOrTransition;
 
-    bindWithTransition(this, 'style:' + styleName, observable, converter, transition, (selection: d3.Selection<any> | d3.Transition<any>, value: Primitive) => {
+    bindWithTransition(this, 'style:' + styleName, observable, converter, transition, (selection: (D3Selection | D3Transition), value: Primitive) => {
         selection.style(styleName, value);
     });
     return this;
@@ -61,7 +61,7 @@ function bindAttr(attr: string, observable: any, converterOrTransition?: any, tr
     var converter = typeof converterOrTransition === 'function' ? converterOrTransition : null;
     var transition: BindingTransition = typeof converterOrTransition === 'function' ? transition : converterOrTransition;
 
-    bindWithTransition(this, 'attr:' + attr, observable, converter, transition, (selection: d3.Selection<any> | d3.Transition<any>, value: Primitive) => {
+    bindWithTransition(this, 'attr:' + attr, observable, converter, transition, (selection: D3Selection | D3Transition, value: Primitive) => {
         selection.attr(attr, value);
     });
     return this;

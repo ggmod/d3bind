@@ -6,6 +6,7 @@ import {BindingTransition} from './bindings/selection';
 
 
 export type D3Selection = d3.Selection<any>;
+export type D3Transition = d3.Transition<any>;
 
 export interface D3BindSelection extends D3Selection {
 
@@ -55,7 +56,10 @@ export interface D3BindSelection extends D3Selection {
 
     bindCall(observable: Observable<any>, func: (selection: D3BindSelection) => void): D3BindSelection;
     bindCall(observable: Observable<any>[], func: (selection: D3BindSelection) => void): D3BindSelection;
+    bindCall(observable: Observable<any>, func: (selection: D3Transition) => void, transition: BindingTransition): D3BindSelection;
+    bindCall(observable: Observable<any>[], func: (selection: D3Transition) => void, transition: BindingTransition): D3BindSelection;
     unbindCall(func: (selection: D3BindSelection) => void): D3BindSelection;
+    unbindCall(func: (selection: D3Transition) => void): D3BindSelection;
 
     bindInput(observable: WritableObservable<Primitive>): D3BindSelection
     unbindInput(): D3BindSelection;

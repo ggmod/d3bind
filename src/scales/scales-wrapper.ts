@@ -24,7 +24,7 @@ function observableInvertibleScale(source: any, ctor: any) {
     var scale = observableScale(source, ctor);
 
     scale.invert = (...args: any[]) => source.invert(...args);
-    scale.tick = (...args: any[]) => source.tick(...args);
+    scale.ticks = (...args: any[]) => source.ticks(...args);
     scale.tickFormat = (...args: any[]) => source.tickFormat(...args);
 
     return scale;
