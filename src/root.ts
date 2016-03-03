@@ -17,8 +17,8 @@ export interface D3Bind {
 
     wrap(selection: D3Selection): D3BindSelection,
 
-    observe(object: any): any,
-    deepObserve(object: any): any,
+    observable(object: any): any,
+    deepObservable(object: any): any,
 
     ObservableArray: typeof ObservableArray,
     ObservableMap: typeof ObservableMap,

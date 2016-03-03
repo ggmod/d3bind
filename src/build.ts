@@ -10,7 +10,7 @@ import './redraw/bind-redraw';
 
 // build the d3bind root element
 import './core/root-override';
-import './root/observe';
+import './root/observable';
 import './root/wrap';
 import './root/root';
 import './transition/transition';
