@@ -13,3 +13,4 @@ import './core/root-override';
 import './root/observe';
 import './root/wrap';
 import './root/root';
+import './transition/transition';

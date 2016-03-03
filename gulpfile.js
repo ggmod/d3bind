@@ -6,7 +6,7 @@ var exorcist = require('exorcist');
 var browserify = require('browserify');
 var tsify = require('tsify');
 var uglifyJs = require('gulp-uglify');
-
+var typescript = require('typescript');
 
 gulp.task('clean', function() {
     return del(['build/*']); // if I remove the whole folder, exorcist fails silently.
@@ -18,7 +18,7 @@ gulp.task('compile', ['clean'], function() {
             standalone: 'd3bind'
         })
         .add('src/main.ts') // you can only have one entry file ('tsd.d.ts' moved to main.ts)
-        .plugin(tsify)
+        .plugin(tsify) // TODO add { typescript: typescript }, but it doesn't work with 1.8.3 yet
         .bundle()
         .on('error', function (error) { console.error(error.toString()); })
         .pipe(exorcist('build/d3bind.js.map'))
