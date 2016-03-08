@@ -42,7 +42,7 @@ export function subscribe<V, T>(observable : Observable<T>, converter: (input: T
 export function subscribe<V>(observable: Observable<any>[], converter: (...params: any[]) => V, handler: ObservableHandler<V>): () => number;
 export function subscribe<V>(observable: any, converter: any, handler: ObservableHandler<V>): () => number {
 
-    var previousValue: V = null;
+    var previousValue: V = getSubscribedValue<V>(observable, converter);
 
     return subscribeEvery(observable, (newValue, oldValue, caller) => {
         var newConvertedValue = getSubscribedValue<V>(observable, converter);

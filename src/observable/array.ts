@@ -2,6 +2,8 @@ import ObservableArrayLength from './array-length';
 import ObservableArrayIndex from "./array-index";
 import Logger from '../utils/logger';
 import Subscribable from "./subscribable";
+import ObservableArrayAll from "./array-all";
+import Observable from './observable';
 
 
 export interface ObservableArrayHandler<T> {
@@ -77,6 +79,10 @@ export default class ObservableArray<T> extends Subscribable<ObservableArrayHand
 
     $index(index: number) {
         return new ObservableArrayIndex<T>(this, index);
+    }
+
+    $all<V>(accessor: (item: T) => Observable<V>) {
+        return new ObservableArrayAll<T, V>(this, accessor);
     }
 
     // basic Array methods:
