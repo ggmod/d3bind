@@ -15,14 +15,15 @@ export interface D3BindSelection extends D3Selection {
     selectAll(selectorText: string): D3BindSelection,
     selectAll(func: () => EventTarget[]): D3BindSelection,
 
+    transition(name?: string): D3BindTransition;
+
     append(tagName: string): D3BindSelection,
     append(func: () => EventTarget): D3BindSelection,
     insert(tagName: string, before: string): D3BindSelection,
     insert(tagName: string, before: () => EventTarget): D3BindSelection,
     insert(func: () => EventTarget, before: string): D3BindSelection,
     insert(func: () => EventTarget, before: () => EventTarget): D3BindSelection,
-    remove(unbind?: boolean): D3BindSelection,
-
+    remove(keepBindings?: boolean): D3BindSelection,
 
     bindText(observable: Observable<string>, transition?: BindingTransition): D3BindSelection;
     bindText<T>(observable: Observable<T>, converter: (input: T) => string, transition?: BindingTransition): D3BindSelection;
@@ -65,14 +66,23 @@ export interface D3BindSelection extends D3Selection {
     unbindInput(): D3BindSelection;
 
     repeat<T>(modelList: ArrayLike<T>, renderer: (modelItem: T, index: number, parent: D3BindSelection) => void): D3BindSelection,
-    bindRepeat<T>(modelList: ObservableArray<T>, renderer: BindRepeatRenderer<T>, options?: BindRepeatOptions): D3BindSelection,
+    bindRepeat<T>(modelList: ObservableArray<T>, renderer: BindRepeatRenderer<T>, options?: BindRepeatOptions<T>): D3BindSelection,
     unbindRepeat(): D3BindSelection;
 
     bindRedraw<T>(observable: Observable<T>, renderer: (model: T, parent: D3BindSelection) => void): D3BindSelection;
     bindRedraw(observable: Observable<any>[], renderer: (...params: any[]) => void): D3BindSelection;
     unbindRedraw(): D3BindSelection;
 
-    unbind(descendants?: boolean): D3BindSelection;
+    bind<T>(observable: Observable<T>, func: (model: T, parent: D3BindSelection) => void): D3BindSelection;
+    bind(observable: Observable<any>[], func: (...params: any[]) => void): D3BindSelection;
+    unbind<T>(func: (model: T, parent: D3BindSelection) => void): D3BindSelection;
+    unbind(func: (...params: any[]) => void): D3BindSelection;
+
+    unbindAll(descendants?: boolean): D3BindSelection;
+}
+
+export interface D3BindTransition extends D3Transition {
+    remove(keepBindings?: boolean): D3BindTransition
 }
 
 const selectionTemplate: D3BindSelection = <D3BindSelection>{};

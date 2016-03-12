@@ -49,7 +49,7 @@ describe('Unbind mechanism', () => {
         it('unbinding everything', () => {
             var { scale, domain } = createExampleScale();
 
-            scale.unbind();
+            scale.unbindAll();
 
             expect(domain._subscribers.length).to.equal(0);
 
@@ -128,7 +128,7 @@ describe('Unbind mechanism', () => {
         it('unbinding everything', () => {
             var { selector, text } = createExampleSelector();
 
-            selector.unbind();
+            selector.unbindAll();
 
             expect(text._subscribers.length).to.equal(0);
 
@@ -193,7 +193,7 @@ describe('Unbind mechanism', () => {
             expect(selector.attr('width')).to.equal('300');
             expect(selector.attr('height')).to.equal('400');
 
-            selector.unbind();
+            selector.unbindAll();
 
             width2.set(310);
             height2.set(410);

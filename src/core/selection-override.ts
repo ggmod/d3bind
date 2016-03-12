@@ -1,5 +1,5 @@
 import {override, addBindingFunctionsToSelection} from './override-utils';
-import selection, {D3Selection, D3BindSelection} from "../selection";
+import selection, {D3Selection, D3BindSelection, D3Transition, D3BindTransition} from "../selection";
 import {unbindSelection} from '../bindings/unbind';
 
 
@@ -37,13 +37,33 @@ function selectAll(param: any): D3BindSelection {
 selection.selectAll = selectAll;
 
 
-selection.remove = function(unbind = true): D3BindSelection {
+selection.remove = function(keepBindings?: boolean): D3BindSelection {
     var _super: D3Selection = Object.getPrototypeOf(this);
     _super.remove(); // detaches it from the DOM
 
-    if (unbind) {
+    if (!keepBindings) {
         unbindSelection(this, true);
     }
 
     return this;
+};
+
+
+selection.transition = function(name?: string): D3BindTransition {
+    var selection = this;
+    var _super: D3Selection = Object.getPrototypeOf(selection);
+    var _superTransition: D3Transition = _super.transition(name);
+
+    var transition: D3BindTransition = Object.create(_superTransition);
+    transition.remove = function(keepBindings?: boolean): D3BindTransition {
+        _superTransition.remove();
+
+        if (!keepBindings) {
+            unbindSelection(selection, true);
+        }
+
+        return this;
+    };
+
+    return transition;
 };

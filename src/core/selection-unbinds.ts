@@ -33,7 +33,7 @@ selection.unbindProperty = function(property: string): D3BindSelection {
 };
 
 
-selection.unbind = function(descendants = false): D3BindSelection {
+selection.unbindAll = function(descendants = false): D3BindSelection {
     unbindSelection(this, descendants);
     return this;
 };

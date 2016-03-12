@@ -27,8 +27,9 @@ interface BindRepeatItem<T> {
     datumProxy: BindRepeatDatumProxy<T>
 }
 
-export interface BindRepeatOptions {
-    customReplace: boolean
+export interface BindRepeatOptions<T> {
+    customReplace: boolean,
+    customRemove: (modelItem: T, index: number, parent: D3BindSelection) => void
 }
 
 export type BindRepeatRenderer<T> = (modelItem: T | WritableObservable<T>, index: Observable<number>, parent: D3BindSelection) => void;
@@ -45,9 +46,6 @@ export default class BindRepeat<T> {
     private currentIndex: number;
     private currentEvent: BindRepeatEvent;
 
-    indexSubscriberCount = 0;
-    datumSubscriberCount = 0;
-
     private itemCounter = 0;
 
     private logger: Logger;
@@ -55,7 +53,7 @@ export default class BindRepeat<T> {
     constructor(
         public modelList: ObservableArray<T>,
         private renderer: BindRepeatRenderer<T>,
-        private options: BindRepeatOptions = <BindRepeatOptions>{},
+        private options: BindRepeatOptions<T> = <BindRepeatOptions<T>>{},
         private selection: D3BindSelection
     ) {
         this.logger = Logger.get('Selection', 'repeat');
@@ -137,7 +135,12 @@ export default class BindRepeat<T> {
         var itemToRemove = this.repeatItems.splice(index, 1)[0];
         delete this.repeatItemsById[itemToRemove.id];
 
-        itemToRemove.selection.remove();
+        if (this.options.customRemove) {
+            this.options.customRemove.call(itemToRemove.selection, item, index, itemToRemove.selection);
+        } else {
+            itemToRemove.selection.remove();
+        }
+
         itemToRemove.indexProxy.unsubscribeAll();
         if (itemToRemove.datumProxy) {
             itemToRemove.datumProxy.unsubscribeAll();
@@ -164,14 +167,10 @@ export default class BindRepeat<T> {
     }
 
     private updateIndexes() {
-        // I assume that in most use-cases there will be either no index subscribers, or every item will have some
-        if (this.indexSubscriberCount > 0 || this.datumSubscriberCount > 0) {
-            for (; this.currentIndex < this.repeatItems.length; this.currentIndex++) {
-                this.repeatItems[this.currentIndex].index = this.currentIndex;
-                if (this.indexSubscriberCount > 0) {
-                    this.repeatItems[this.currentIndex].indexProxy._trigger();
-                }
-            }
+        // I wanted to optimize this to only run, if there are subscribers on $i or $d, but they can use $i.get() without subscribing to it
+        for (; this.currentIndex < this.repeatItems.length; this.currentIndex++) {
+            this.repeatItems[this.currentIndex].index = this.currentIndex;
+            this.repeatItems[this.currentIndex].indexProxy._trigger();
         }
     }
 
@@ -179,8 +178,8 @@ export default class BindRepeat<T> {
         if (this.currentIndex !== null) {
             return this.currentIndex;
         } else {
-            var index = this.repeatItemsById[id].index;
-            if (index == null) throw "bindRepeat index not found!";
+            var index = this.repeatItemsById[id] && this.repeatItemsById[id].index;
+            if (index == null) console.warn("bindRepeat index not found!");
             return index;
         }
     }
@@ -238,7 +237,7 @@ export default class BindRepeat<T> {
     }
 }
 
-function bindRepeat<T>(modelList: ObservableArray<T>, renderer: BindRepeatRenderer<T>, options?: BindRepeatOptions): D3BindSelection {
+function bindRepeat<T>(modelList: ObservableArray<T>, renderer: BindRepeatRenderer<T>, options?: BindRepeatOptions<T>): D3BindSelection {
     this.node()[REPEAT_PREFIX] = new BindRepeat<T>(modelList, renderer, options, this);
     return this;
 }

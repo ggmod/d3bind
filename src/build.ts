@@ -3,6 +3,7 @@ import './core/selection-bindings';
 import './core/selection-bindcall';
 import './core/selection-override';
 import './core/selection-unbinds';
+import './core/selection-custombind';
 import './repeat/repeat';
 import './repeat/bind-repeat';
 import './input/bind-input';

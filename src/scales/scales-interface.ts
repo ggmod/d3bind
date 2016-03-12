@@ -31,7 +31,7 @@ export interface ObservableScale<Domain, Range, Output> {
 
     copy(): this
 
-    unbind(): this;
+    unbindAll(): this;
 }
 
 export interface ObservableInvertibleScale<Domain, Range, Output> extends ObservableScale<Domain, Range, Output> {

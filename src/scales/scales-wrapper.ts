@@ -12,7 +12,7 @@ function observableScale(source: any, ctor: any) {
 
     scale.copy = () => ctor(source.copy());
 
-    scale.unbind = () => {
+    scale.unbindAll = () => {
         unbindObject(scale);
         return scale;
     };
