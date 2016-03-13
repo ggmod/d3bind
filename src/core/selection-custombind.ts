@@ -43,7 +43,7 @@ function bind(observable: any, func: () => void): D3BindSelection {
     applyFunc(this, observable, func);
 
     var unsubscribeFunc = subscribe(observable, () => null, (newValue, oldValue, caller) => {
-        logger.log('caller:', caller);
+        logger.log('caller:', caller, '| node:', this.node());
         applyFunc(this, observable, func);
     });
 

@@ -13,7 +13,7 @@ abstract class AbstractObservable<T> extends Subscribable<ObservableHandler<T>> 
     }
 
     protected _trigger(newValue: T, oldValue: T, caller?: any) {
-        this._logger.logIndent(newValue, 'oldValue:', oldValue, 'caller:', caller);
+        this._logger.logIndent(newValue, '| oldValue:', oldValue, '| caller:', caller);
 
         this._subscribers.forEach(subscriber => {
             subscriber.call(null, newValue, oldValue, caller);

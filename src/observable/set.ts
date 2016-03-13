@@ -33,7 +33,7 @@ export default class ObservableSet<T> extends Subscribable<ObservableSetHandler<
     private _triggerInsert(item: T) {
         this._size++;
 
-        this._logger.logIndent('insert', item);
+        this._logger.logIndent('insert:', item);
 
         this._subscribers.forEach(subscriber => {
             subscriber.insert.call(null, item);
@@ -45,7 +45,7 @@ export default class ObservableSet<T> extends Subscribable<ObservableSetHandler<
     private _triggerRemove(item: T) {
         this._size--;
 
-        this._logger.logIndent('remove', item);
+        this._logger.logIndent('remove:', item);
 
         this._subscribers.forEach(subscriber => {
             subscriber.remove.call(null, item);

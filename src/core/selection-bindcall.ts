@@ -34,7 +34,7 @@ function bindCall(observable: any, func: (selection: any) => void, transition?: 
     var unsubscribeFunc = subscribe(observable, () => null, (newValue, oldValue, caller) => {
         var _selection = getTransitionSelection(this, transition, 'call:' + getFuncId(func));
 
-        logger.log('caller:', caller);
+        logger.log('caller:', caller, '| node:', this.node());
         (<any>_selection).call(func); // why can't TS compile this?
     });
 

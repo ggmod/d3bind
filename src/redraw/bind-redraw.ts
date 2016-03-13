@@ -25,7 +25,7 @@ function bindRedraw(observable: any, renderer: () => void): D3BindSelection {
     redraw(this, observable, renderer);
 
     var unsubscribeFunc = subscribe(observable, () => null, (newValue, oldValue, caller) => {
-        logger.log('caller:', caller);
+        logger.log('caller:', caller, '| node:', this.node());
         redraw(this, observable, renderer);
     });
 

@@ -90,7 +90,7 @@ export default class BindRepeat<T> {
         }
         this.repeatItemsById[id] = repeatItem;
 
-        return { indexProxy, datumProxy };
+        return repeatItem;
     }
 
     private build() {
@@ -98,10 +98,10 @@ export default class BindRepeat<T> {
 
         for (this.currentIndex = 0; this.currentIndex < this.modelList.length; this.currentIndex++) {
 
-            var { indexProxy, datumProxy } = this.createRepeatItem();
+            var repeatItem = this.createRepeatItem();
             var modelItem = this.modelList.get(this.currentIndex);
-            var rendererItem = this.options.customReplace ? datumProxy : modelItem;
-            this.renderer.call(this.selectionProxy, rendererItem, indexProxy, this.selectionProxy); // 'this' passed in twice, intentional redundancy
+            var rendererItem = this.options.customReplace ? repeatItem.datumProxy : modelItem;
+            this.renderer.call(this.selectionProxy, rendererItem, repeatItem.indexProxy, this.selectionProxy); // 'this' passed in twice, intentional redundancy
         }
 
         this.currentEvent = null;
@@ -109,14 +109,15 @@ export default class BindRepeat<T> {
     }
 
     private onInsert(item: T, index: number) {
-        this.logger.log('insert', item, 'index:', index);
 
         this.currentEvent = BindRepeatEvent.INSERT;
         this.currentIndex = index;
 
-        var { indexProxy, datumProxy } = this.createRepeatItem();
-        var rendererItem = this.options.customReplace ? datumProxy : item;
-        this.renderer.call(this.selectionProxy, rendererItem, indexProxy, this.selectionProxy);
+        var repeatItem = this.createRepeatItem();
+        var rendererItem = this.options.customReplace ? repeatItem.datumProxy : item;
+        this.renderer.call(this.selectionProxy, rendererItem, repeatItem.indexProxy, this.selectionProxy);
+
+        this.logger.log('insert:', item, '| index:', index, '| node:', repeatItem.selection.node());
 
         this.currentEvent = BindRepeatEvent.INSERT_REINDEXING;
         this.currentIndex++;
@@ -127,13 +128,14 @@ export default class BindRepeat<T> {
     }
 
     private onRemove(item: T, index: number) {
-        this.logger.log('remove', item, 'index:', index);
 
         this.currentEvent = BindRepeatEvent.REMOVE;
         this.currentIndex = index;
 
         var itemToRemove = this.repeatItems.splice(index, 1)[0];
         delete this.repeatItemsById[itemToRemove.id];
+
+        this.logger.log('remove:', item, '| index:', index, '| node:', itemToRemove.selection.node());
 
         if (this.options.customRemove) {
             this.options.customRemove.call(itemToRemove.selection, item, index, itemToRemove.selection);
@@ -154,12 +156,13 @@ export default class BindRepeat<T> {
     }
 
     private onReplace(item: T, index: number, oldValue: T, caller: any) {
-        this.logger.log('replace', item, 'index:', index, 'oldValue:', oldValue, 'caller:', caller);
 
         this.currentEvent = BindRepeatEvent.REPLACE;
         this.currentIndex = index;
 
         var repeatItem = this.repeatItems[index];
+        this.logger.log('replace:', item, '| index:', index, '| oldValue:', oldValue, '| caller:', caller, ' node:', repeatItem.selection.node());
+
         repeatItem.datumProxy._trigger(item, oldValue, caller);
 
         this.currentEvent = null;
@@ -170,7 +173,9 @@ export default class BindRepeat<T> {
         // I wanted to optimize this to only run, if there are subscribers on $i or $d, but they can use $i.get() without subscribing to it
         for (; this.currentIndex < this.repeatItems.length; this.currentIndex++) {
             this.repeatItems[this.currentIndex].index = this.currentIndex;
-            this.repeatItems[this.currentIndex].indexProxy._trigger();
+            if (this.repeatItems[this.currentIndex].indexProxy._getSubscriberCount() > 0) { // to avoid polluting the logs
+                this.repeatItems[this.currentIndex].indexProxy._trigger();
+            }
         }
     }
 

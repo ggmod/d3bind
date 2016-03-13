@@ -15,6 +15,10 @@ export default class BindRepeatIndexProxy extends AbstractObservable<number> {
         super._trigger(newValue, oldValue, caller);
     }
 
+    _getSubscriberCount() {
+        return this._subscribers.length;
+    }
+
     get(): number {
         return this.bindRepeat.getCurrentValueOfItem(this.id);
     }

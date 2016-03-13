@@ -15,7 +15,7 @@ export function bind<V>(selection: D3BindSelection, name: string, observable: an
     applyFunc(getSubscribedValue<V>(observable, converter));
 
     var unsubscribeFunc = subscribe<V>(observable, converter, (newValue, oldValue, caller) => {
-        logger.log(newValue, 'oldValue:', oldValue, 'caller:', caller);
+        logger.log(newValue, '| oldValue:', oldValue, '| caller:', caller, '| node:', selection.node());
         applyFunc(newValue, caller);
     });
 
@@ -59,7 +59,7 @@ export function bindWithTransition<V>(selection: D3BindSelection, name: string, 
     var unsubscribeFunc = subscribe<V>(observable, converter, (newValue, oldValue, caller) => {
         var _selection = getTransitionSelection(selection, transition, name);
 
-        logger.log(newValue, 'oldValue:', oldValue, 'caller:', caller);
+        logger.log(newValue, '| oldValue:', oldValue, '| caller:', caller, '| node:', selection.node());
         applyFunc(_selection, newValue, caller);
     });
 

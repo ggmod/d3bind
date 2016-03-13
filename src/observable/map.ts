@@ -38,7 +38,7 @@ export default class ObservableMap<K, V> extends Subscribable<ObservableMapHandl
     private _triggerInsert(item: V, key: K) {
         this._size++;
 
-        this._logger.logIndent('insert', item, 'key:', key);
+        this._logger.logIndent('insert:', item, '| key:', key);
 
         this._subscribers.forEach(subscriber => {
             subscriber.insert.call(null, item, key);
@@ -50,7 +50,7 @@ export default class ObservableMap<K, V> extends Subscribable<ObservableMapHandl
     private _triggerRemove(item: V, key: K) {
         this._size--;
 
-        this._logger.logIndent('remove', item, 'key:', key);
+        this._logger.logIndent('remove:', item, '| key:', key);
 
         this._subscribers.forEach(subscriber => {
             subscriber.remove.call(null, item, key);
@@ -60,7 +60,7 @@ export default class ObservableMap<K, V> extends Subscribable<ObservableMapHandl
     }
 
     private _triggerReplace(item: V, key: K, oldValue: V, caller?: any) {
-        this._logger.logIndent('replace', item, 'key:', key, 'oldValue:', oldValue, 'caller:', caller);
+        this._logger.logIndent('replace:', item, '| key:', key, '| oldValue:', oldValue, '| caller:', caller);
 
         this._subscribers.forEach(subscriber => {
             if (subscriber.replace != null) {

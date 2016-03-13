@@ -37,7 +37,7 @@ export default class ObservableArray<T> extends Subscribable<ObservableArrayHand
     // subscribing:
 
     private _triggerInsert(item: T, index: number) {
-        this._logger.logIndent('insert', item, 'index:', index);
+        this._logger.logIndent('insert:', item, '| index:', index);
 
         this._subscribers.forEach(subscriber => {
             subscriber.insert.call(null, item, index);
@@ -47,7 +47,7 @@ export default class ObservableArray<T> extends Subscribable<ObservableArrayHand
     }
 
     private _triggerRemove(item: T, index: number) {
-        this._logger.logIndent('remove', item, 'index:', index);
+        this._logger.logIndent('remove:', item, '| index:', index);
 
         this._subscribers.forEach(subscriber => {
             subscriber.remove.call(null, item, index);
@@ -57,7 +57,7 @@ export default class ObservableArray<T> extends Subscribable<ObservableArrayHand
     }
 
     private _triggerReplace(item: T, index: number, oldValue: T, caller?: any) {
-        this._logger.logIndent('replace', item, 'index:', index, 'oldValue:', oldValue, 'caller:', caller);
+        this._logger.logIndent('replace:', item, '| index:', index, '| oldValue:', oldValue, '| caller:', caller);
 
         this._subscribers.forEach(subscriber => {
             if (subscriber.replace != null) {
