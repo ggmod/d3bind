@@ -1,15 +1,14 @@
 {
   "name": "d3bind",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Observable data bindings for d3.js",
   "keywords": [
-    "d3",
-    "observable"
+    "d3", "d3.js", "d3bind", "observable"
   ],
   "main": "dist/index.js",
   "typings": "dist/index",
   "author": "ggmod",
-  "license": "ISC",
+  "license": "MIT",
   "scripts": {
     "prepublish": "gulp build && tsc",
     "test": "mocha --harmony-destructuring test/**/*.js"
