@@ -1,9 +1,12 @@
 {
   "name": "d3bind",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Observable data bindings for d3.js",
   "keywords": [
-    "d3", "d3.js", "d3bind", "observable"
+    "d3",
+    "d3.js",
+    "d3bind",
+    "observable"
   ],
   "repository": {
     "type": "git",
