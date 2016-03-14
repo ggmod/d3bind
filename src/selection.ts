@@ -14,6 +14,8 @@ export interface D3BindSelection extends D3Selection {
     select(func: () => EventTarget): D3BindSelection,
     selectAll(selectorText: string): D3BindSelection,
     selectAll(func: () => EventTarget[]): D3BindSelection,
+    filter(selector: string): D3BindSelection;
+    filter(selector: () => boolean): D3BindSelection;
 
     transition(name?: string): D3BindTransition;
 
@@ -82,7 +84,16 @@ export interface D3BindSelection extends D3Selection {
 }
 
 export interface D3BindTransition extends D3Transition {
-    remove(keepBindings?: boolean): D3BindTransition
+    remove(keepBindings?: boolean): D3BindTransition;
+
+    transition(): D3BindTransition;
+
+    select(selectorText: string): D3BindTransition,
+    select(func: () => EventTarget): D3BindTransition,
+    selectAll(selectorText: string): D3BindTransition,
+    selectAll(func: () => EventTarget[]): D3BindTransition,
+    filter(selector: string): D3BindTransition;
+    filter(selector: () => boolean): D3BindTransition;
 }
 
 const selectionTemplate: D3BindSelection = <D3BindSelection>{};

@@ -5,7 +5,7 @@ import d3bind from '../root';
 const TRANSITION_PREFIX = 'd3bind_global_';
 var sequence = 0;
 
-export default class D3BindTransition {
+export default class D3BindGlobalTransition {
 
     /*private*/ constructor() {}
 
@@ -85,5 +85,5 @@ export default class D3BindTransition {
 }
 
 d3bind.transition = function() {
-    return new D3BindTransition();
+    return new D3BindGlobalTransition();
 };

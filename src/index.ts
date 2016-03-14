@@ -23,6 +23,6 @@ export {default as ObservableArray, ObservableArrayHandler} from './observable/a
 export {default as ObservableSet, ObservableSetHandler} from './observable/set';
 export {default as ObservableMap, ObservableMapHandler} from './observable/map';
 
-export {default as D3BindTransition} from './transition/transition';
+export {default as D3BindGlobalTransition} from './transition/transition';
 
 export * from './scales/scales-interface';

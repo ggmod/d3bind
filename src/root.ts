@@ -5,7 +5,7 @@ import ObservableSet from "./observable/set";
 import ObservableValue from './observable/value';
 import ObservableView from './observable/view';
 import {ObservableScales, ObservableTimeScales} from './scales/scales-interface';
-import D3BindTransition from './transition/transition';
+import D3BindGlobalTransition from './transition/transition';
 
 
 export interface D3Bind {
@@ -26,7 +26,7 @@ export interface D3Bind {
     ObservableValue: typeof ObservableValue,
     ObservableView: typeof ObservableView,
 
-    transition: () => D3BindTransition;
+    transition: () => D3BindGlobalTransition;
 
     scale: ObservableScales,
     time: { scale: ObservableTimeScales }
