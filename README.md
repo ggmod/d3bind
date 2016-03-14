@@ -3,6 +3,8 @@ D3bind
 
 D3bind is a library that brings model-view separation and observables to d3.js.
 
+Examples can be found here: [code](https://github.com/ggmod/d3bind-demo), [demo](https://ggmod.github.io/d3bind-demo)
+
 Hello world example:
 
 ```javascript
