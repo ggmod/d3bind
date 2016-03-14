@@ -5,6 +5,10 @@
   "keywords": [
     "d3", "d3.js", "d3bind", "observable"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ggmod/d3bind.git"
+  },
   "main": "dist/index.js",
   "typings": "dist/index",
   "author": "ggmod",
