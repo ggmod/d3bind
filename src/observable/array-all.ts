@@ -1,49 +1,27 @@
-import OBservableArray from './array';
+import ObservableArray from './array';
 import Observable from './observable';
 import AbstractObservable from './abstract';
 
 
-export default class ObservableArrayAll<T, V> extends AbstractObservable<V> {
+export default class ObservableArrayAll<T> extends AbstractObservable<T> {
 
-    private _unbinds: (() => void)[] = [];
-
-    constructor(private array: OBservableArray<T>, private accessor: (item: T) => Observable<V>) {
+    constructor(private array: ObservableArray<T>) {
         super();
-
-        array.forEach((item, i) => {
-            this._subscribeItem(item, i);
-        });
 
         array.subscribe({
             insert: (item, i) => {
-                this._subscribeItem(item, i);
-
-                var value = this.accessor(item).get();
-                this._trigger(value, null);
+                this._trigger(item, null);
             },
             remove: (item, i) => {
-                this._unsubscribeItem(item, i);
-
-                var value = this.accessor(item).get();
-                this._trigger(null, value);
+                this._trigger(null, item);
+            },
+            replace: (item, i, oldItem, caller) => {
+                this._trigger(item, oldItem, caller);
             }
         });
     }
 
-    _subscribeItem(item: T, index: number) {
-        var observable = this.accessor(item);
-        var unbind = observable.subscribe((value, oldValue, caller) => {
-            this._trigger(value, oldValue, caller);
-        });
-        this._unbinds.splice(index, 0, unbind);
-    }
-
-    _unsubscribeItem(item: T, index: number) {
-        this._unbinds[index]();
-        this._unbinds.splice(index, 1);
-    }
-
-    get(): V {
+    get(): T {
         return null; // Not supported
     }
 }
