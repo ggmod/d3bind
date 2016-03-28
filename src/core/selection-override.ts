@@ -38,6 +38,14 @@ function selectAll(param: any): D3BindSelection {
 selection.selectAll = selectAll;
 
 
+function filter(func: () => boolean): D3BindSelection;
+function filter(selectorText: string): D3BindSelection;
+function filter(param: any): D3BindSelection {
+    return override(this, _super => _super.filter(param));
+}
+selection.filter = filter;
+
+
 selection.remove = function(keepBindings?: boolean): D3BindSelection {
     var _super: D3Selection = Object.getPrototypeOf(this);
     _super.remove(); // detaches it from the DOM

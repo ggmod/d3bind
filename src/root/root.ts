@@ -6,6 +6,7 @@ import ObservableMap from '../observable/map';
 import ObservableSet from '../observable/set';
 import ObservableValue from '../observable/value';
 import ObservableView from '../observable/view';
+import ObservableProperty from '../observable/property';
 
 
 d3bind.ObservableArray = ObservableArray;
@@ -13,6 +14,7 @@ d3bind.ObservableMap = ObservableMap;
 d3bind.ObservableSet = ObservableSet;
 d3bind.ObservableValue = ObservableValue;
 d3bind.ObservableView = ObservableView;
+d3bind.ObservableProperty = ObservableProperty;
 
 d3bind.scale = scales;
 d3bind.time = { scale: timeScales };

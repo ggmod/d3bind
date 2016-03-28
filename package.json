@@ -17,7 +17,7 @@
   "author": "ggmod",
   "license": "MIT",
   "scripts": {
-    "prepublish": "gulp build && tsc",
+    "prepublish": "gulp build && rm -rf dist/* && tsc",
     "test": "mocha --harmony-destructuring test/**/*.js"
   },
   "devDependencies": {

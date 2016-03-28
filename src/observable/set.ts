@@ -3,6 +3,9 @@ import ObservableSetValue from './set-value';
 import ObservableArray from './array';
 import Logger from '../utils/logger';
 import Subscribable from "./subscribable";
+import Observable from './observable';
+import ObservableSetAll from './set-all';
+import ObservableSetAllAccessor from './set-all-accessor';
 
 
 export interface ObservableSetHandler<T> {
@@ -56,12 +59,22 @@ export default class ObservableSet<T> extends Subscribable<ObservableSetHandler<
 
     // bindings:
 
-    get $size() {
+    get $size(): Observable<number> {
         return this._observableSize;
     }
 
-    $has(value: T) {
+    $has(value: T): Observable<boolean> {
         return new ObservableSetValue<T>(this, value);
+    }
+
+    $all(): Observable<T>;
+    $all<V>(accessor: (item: T) => Observable<V>): Observable<V>;
+    $all<V>(accessor?: (item: T) => Observable<V>): any {
+        if (accessor) {
+            return new ObservableSetAllAccessor<T, V>(this, accessor);
+        } else {
+            return new ObservableSetAll<T>(this);
+        }
     }
 
     // basic Set methods:

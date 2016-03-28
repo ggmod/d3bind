@@ -7,7 +7,7 @@ export default class ObservableProperty<T> extends AbstractObservable<T> impleme
     private _parent: any;
     private _value: T;
 
-    constructor(parent: any, name: string) {
+    /* private */ constructor(parent: any, name: string) {
         super(name);
 
         this._parent = parent;

@@ -19,6 +19,7 @@ export {BindRepeatOptions, BindRepeatRenderer} from './repeat/bind-repeat';
 export * from './observable/observable';
 export {default as ObservableValue} from './observable/value';
 export {default as ObservableView} from './observable/view';
+export {default as ObservableProperty} from './observable/property';
 export {default as ObservableArray, ObservableArrayHandler} from './observable/array';
 export {default as ObservableSet, ObservableSetHandler} from './observable/set';
 export {default as ObservableMap, ObservableMapHandler} from './observable/map';

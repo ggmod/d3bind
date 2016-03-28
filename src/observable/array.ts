@@ -4,7 +4,7 @@ import Logger from '../utils/logger';
 import Subscribable from "./subscribable";
 import ObservableArrayAll from "./array-all";
 import ObservableArrayAllAccessor from "./array-all-accessor";
-import Observable from './observable';
+import Observable, { WritableObservable } from './observable';
 
 
 export interface ObservableArrayHandler<T> {
@@ -78,7 +78,7 @@ export default class ObservableArray<T> extends Subscribable<ObservableArrayHand
         return this._observableLength;
     }
 
-    $index(index: number): Observable<T> {
+    $index(index: number): WritableObservable<T> {
         return new ObservableArrayIndex<T>(this, index);
     }
 

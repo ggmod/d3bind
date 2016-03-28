@@ -3,6 +3,9 @@ import ObservableMapKey from './map-key';
 import ObservableArray from './array';
 import Logger from '../utils/logger';
 import Subscribable from "./subscribable";
+import Observable, { WritableObservable } from './observable';
+import ObservableMapAll from './map-all';
+import ObservableMapAllAccessor from './map-all-accessor';
 
 
 export interface ObservableMapHandler<K, V> {
@@ -76,12 +79,22 @@ export default class ObservableMap<K, V> extends Subscribable<ObservableMapHandl
 
     // bindings:
 
-    get $size() {
+    get $size(): Observable<number> {
         return this._observableSize;
     }
 
-    $key(key: K) {
+    $key(key: K): WritableObservable<V> {
         return new ObservableMapKey<K,V>(this, key);
+    }
+
+    $all(): Observable<V>;
+    $all<T>(accessor: (item: V) => Observable<T>): Observable<T>;
+    $all<T>(accessor?: (item: V) => Observable<T>): any {
+        if (accessor) {
+            return new ObservableMapAllAccessor<K,V,T>(this, accessor);
+        } else {
+            return new ObservableMapAll<K,V>(this);
+        }
     }
 
     // basic Map methods:
