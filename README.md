@@ -1,13 +1,15 @@
 D3bind
 ======
 
-D3bind is a library that brings model-view separation and observables to d3.js.
+D3bind is a library that brings model-view separation and observables to <b>d3.js</b>.
 
-Build of the initial release: [d3bind.js](https://github.com/ggmod/d3bind/releases/download/v0.1.1/d3bind.js)
+You can use the bundled library: [d3bind.js](https://github.com/ggmod/d3bind/releases/download/v0.1.1/d3bind.js), or install it with `npm install d3bind --save`
 
 Examples can be found here: [code](https://github.com/ggmod/d3bind-demo), [demo](https://ggmod.github.io/d3bind-demo)
 
-Hello world example:
+[See the wiki](https://github.com/ggmod/d3bind/wiki) for more explanation.
+
+#### Hello world example:
 
 ```javascript
 var model = d3bind.observable({ name: '' });
@@ -24,4 +26,5 @@ To debug the cascading changes of observables, switch on logging:
 d3bind.logging = true;
 ```
 
+#### Licensing
 Released under The MIT License.
