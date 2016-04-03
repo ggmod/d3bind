@@ -9,7 +9,7 @@ Examples can be found here: [code](https://github.com/ggmod/d3bind-demo), [demo]
 
 [See the wiki](https://github.com/ggmod/d3bind/wiki) for more explanation.
 
-#### Hello world example:
+#### Hello world example
 
 ```javascript
 var model = d3bind.observable({ name: '' });
@@ -20,6 +20,33 @@ parent.append('div')
     .bindStyle('display', model.$name, function(name) { return name ? 'block' : 'none'; })
     .bindText(model.$name, function(name) { return 'Hello ' + name; });
 ```
+
+#### Data binding
+
+Instead of the data join mechanism of d3.js with the data, enter and exit functions, this library offers an alternative that uses an observable array model, and view bindings that automatically react to the changes in it.
+
+```javascript
+var data = d3bind.observable([4, 8, 15, 16]);
+var view = d3bind.select('body');
+
+view.append('ul').bindRepeat(data, function(d, $i) {
+	var li = this.append('li');
+	li.append('span').bindText($i);
+	li.append('span').text(d);
+});
+
+view.append('button').text('Insert random').on('click', function() {
+	data.push(Math.floor(Math.random()*100));
+});
+
+view.append('button').text('Remove random').on('click', function() {
+	data.splice(Math.floor(Math.random()*data.length), 1);
+});
+
+view.append('div').bindText(data.$length);
+```
+
+#### Logging
 
 To debug the cascading changes of observables, switch on logging:
 ```javascript
