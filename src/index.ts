@@ -7,7 +7,7 @@ if (typeof window !== 'undefined') {
 }
 
 export default d3bind;
-
+export {d3bind};
 
 export * from './root';
 export * from './selection';
